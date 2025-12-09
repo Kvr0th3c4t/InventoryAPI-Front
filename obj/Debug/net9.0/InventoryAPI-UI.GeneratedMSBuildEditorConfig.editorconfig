@@ -60,6 +60,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSG9tZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Adria/OneDrive/Escritorio/InventoryAPI-UI/InventoryAPI-UI/Pages/Movimientos/MovimientosCrear.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTW92aW1pZW50b3NcTW92aW1pZW50b3NDcmVhci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Adria/OneDrive/Escritorio/InventoryAPI-UI/InventoryAPI-UI/Pages/Movimientos/MovimientosHome.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTW92aW1pZW50b3NcTW92aW1pZW50b3NIb21lLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
