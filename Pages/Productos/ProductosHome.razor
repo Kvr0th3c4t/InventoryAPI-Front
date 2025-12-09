@@ -1,0 +1,207 @@
+﻿@page "/productos-home"
+
+@using InventoryAPI_UI.Components.Dashboard
+@using InventoryAPI_UI.Models.StatsModels.MovimientosStatModel
+@using InventoryAPI_UI.Models.StatsModels.ProductosStatsModel
+@using InventoryAPI_UI.Services.StatsService.ProductoStatsService
+@inject IProductoStatsService ProductoStatsService
+
+<PageTitle>Dashboard de productos</PageTitle>
+
+<TitleCard Title="Kpi's inventario"></TitleCard>
+<MudGrid Spacing="2">
+    <MudItem xs="3">
+        <KpiCard Title="Total Productos" Value=@totalProductos.ToString("N0") Icon="@Icons.Material.Filled.Inventory"
+            IconColor="Color.Primary" ValueColor="Color.Primary" />
+    </MudItem>
+
+    <MudItem xs="3">
+        <KpiCard Title="Stock Bajo" Value=@(stockBajo == 0 ? "Sin alertas" : stockBajo.ToString())
+            Icon="@Icons.Material.Filled.Warning" IconColor="Color.Warning" ValueColor="Color.Warning" />
+    </MudItem>
+    <MudItem xs="3">
+        <KpiCard Title="Sin Stock" Value=@(sinStock == 0 ? "Sin alertas" : sinStock.ToString())
+            Icon="@Icons.Material.Filled.Dangerous" IconColor="Color.Error" ValueColor="Color.Error" />
+    </MudItem>
+    <MudItem xs="3">
+        <KpiCard Title="Últimos 30 dias" Value=@(totalMovimientosUltimos30 == 0 ? "Sin movimientos" :
+                                                     $"{totalMovimientosUltimos30.ToString()} movimientos") Icon="@Icons.Material.Filled.Info"
+            IconColor="Color.Tertiary" ValueColor="Color.Tertiary" />
+    </MudItem>
+</MudGrid>
+
+<TitleCard Title="Kpi's valor de producto"></TitleCard>
+<MudGrid Spacing="2">
+    <MudItem xs="3">
+        <KpiCard Title="Valor Total Inventario" Value=@($"{valorTotal:N2} €") Icon="@Icons.Material.Filled.AttachMoney"
+            IconColor="Color.Success" ValueColor="Color.Success" />
+    </MudItem>
+    <MudItem xs="3">
+        <KpiCard Title="Precio promedio" Value=@($"{precioPromedio:N2} €") Icon="@Icons.Material.Filled.AttachMoney"
+            IconColor="Color.Success" ValueColor="Color.Success" />
+    </MudItem>
+    <MudItem xs="3">
+        <KpiCard Title="Precio más alto" Value=@($"{precioMasAlto:N2} €") Icon="@Icons.Material.Filled.AttachMoney"
+            IconColor="Color.Success" ValueColor="Color.Success" />
+    </MudItem>
+    <MudItem xs="3">
+        <KpiCard Title="Precio más bajo" Value=@($"{precioMasBajo:N2} €") Icon="@Icons.Material.Filled.AttachMoney"
+            IconColor="Color.Success" ValueColor="Color.Success" />
+    </MudItem>
+</MudGrid>
+
+<TitleCard Title="Graficas agrupadas"></TitleCard>
+<MudGrid Spacing="2">
+    <MudItem xs="6">
+        <MudPaper Class="pa-4" Height="500px">
+            <MudText Typo="Typo.h6" class="mb-2"> Productos por proveedor</MudText>
+
+            <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" InputData="@dataProveedor"
+                InputLabels="@labelsProveedor">
+            </MudChart>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="6">
+        <MudPaper Class="pa-4" Height="500px">
+            <MudText Typo="Typo.h6" class="mb-2"> Productos por categoria</MudText>
+
+            <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" InputData="@dataCategoria"
+                InputLabels="@labelsCategoria">
+            </MudChart>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+<TitleCard Title="Histórico de Tops de producto"></TitleCard>
+<MudGrid Spacing="2" Class="mb-4">
+    <MudItem xs="4">
+        <MudTable Items="@top5MasValiosos?.OrderByDescending(item => item.Precio)" Hover="true"
+            Breakpoint="Breakpoint.Sm" Loading="@loading" LoadingProgressColor="Color.Info">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Top 5 más valiosos</MudText>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Id</MudTh>
+                <MudTh>Sku</MudTh>
+                <MudTh>Precio</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Nr">@context.Id</MudTd>
+                <MudTd DataLabel="Sign">@context.SKU</MudTd>
+                <MudTd DataLabel="Name">@context.Precio €</MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudItem>
+    <MudItem xs="4">
+        <MudTable Items="@top5MasStock?.OrderByDescending(item => item.StockActual)" Hover="true"
+            Breakpoint="Breakpoint.Sm" Loading="@loading" LoadingProgressColor="Color.Info">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Top 5 más Stock</MudText>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Id</MudTh>
+                <MudTh>Sku</MudTh>
+                <MudTh>Stock</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Nr">@context.Id</MudTd>
+                <MudTd DataLabel="Sign">@context.SKU</MudTd>
+                <MudTd DataLabel="Name">@context.StockActual uds</MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudItem>
+    <MudItem xs="4">
+        <MudTable Items="@top5MenosStock?.OrderBy(item => item.StockActual)" Hover="true" Breakpoint="Breakpoint.Sm"
+            Loading="@loading" LoadingProgressColor="Color.Info">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Top 5 menos Stock</MudText>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Id</MudTh>
+                <MudTh>Sku</MudTh>
+                <MudTh>Stock</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Nr">@context.Id</MudTd>
+                <MudTd DataLabel="Sign">@context.SKU</MudTd>
+                <MudTd DataLabel="Name">@context.StockActual uds</MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudItem>
+</MudGrid>
+
+@code
+{
+    //Variables KPI's Stock producto
+    private int totalProductos = 0;
+    private int stockBajo = 0;
+    private int sinStock = 0;
+    private int totalMovimientosUltimos30 = 0;
+
+    //Variables KPI's Valor producto
+    private decimal valorTotal = 0;
+    private decimal precioPromedio = 0;
+    private decimal precioMasAlto = 0;
+    private decimal precioMasBajo = 0;
+
+    //Flags
+    private bool loading = true;
+    private string? error = null;
+
+    //Variables de gráficas
+
+    private PagedResponse<DistribucionCategoriaDto>? distribucionPorCategoria;
+    private PagedResponse<DistribucionProveedorDto>? distribucionPorProveedor;
+    private double[] dataProveedor = { };
+    private string[] labelsProveedor = { };
+    private double[] dataCategoria = { };
+    private string[] labelsCategoria = { };
+
+    //Variables de Tablas
+    private List<ProductoResponseDto>? top5MasValiosos;
+    private List<ProductoResponseDto>? top5MasStock;
+    private List<ProductoResponseDto>? top5MenosStock;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            loading = true;
+
+            // Cargar datos de KPIs
+            valorTotal = await ProductoStatsService.GetTotalValorInventario();
+            totalProductos = await ProductoStatsService.GetTotalProductos();
+            stockBajo = await ProductoStatsService.GetProductosBajoStock();
+            precioPromedio = await ProductoStatsService.GetPrecioPromedio();
+            precioMasAlto = await ProductoStatsService.GetPrecioMasAlto();
+            precioMasBajo = await ProductoStatsService.GetPrecioMasBajo();
+
+            //Cargar info adicional
+            sinStock = await ProductoStatsService.GetProductosSinStock();
+
+            //Cargar info graficas
+            distribucionPorCategoria = await ProductoStatsService.GetDistribucionPorCategoria(1, 100);
+            distribucionPorProveedor = await ProductoStatsService.GetDistribucionPorProveedor(1, 100);
+
+            dataProveedor = distribucionPorProveedor.Items.Select(item => (double)item.CantidadProductos).ToArray();
+
+            labelsProveedor = distribucionPorProveedor.Items.Select(item => item.NombreProveedor).ToArray();
+
+            dataCategoria = distribucionPorCategoria.Items.Select(item => (double)item.CantidadProductos).ToArray();
+
+            labelsCategoria = distribucionPorCategoria.Items.Select(item => item.NombreCategoria).ToArray();
+
+            //Cargar datos de Tabla
+            top5MasValiosos = await ProductoStatsService.GetTop5ProductosMasValiosos();
+            top5MasStock = await ProductoStatsService.GetTop5ProductosMasStock();
+            top5MenosStock = await ProductoStatsService.GetTop5ProductosMenorStock();
+
+            loading = false;
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+            loading = false;
+        }
+    }
+}

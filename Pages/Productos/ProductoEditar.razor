@@ -1,0 +1,127 @@
+@page "/productos-editar/{Id:int}"
+
+@inject IProductoService ProductoService
+@inject ICategoriaService CategoriaService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+
+<MudPaper Elevation="2" Class="pa-6">
+    <MudText Typo="Typo.h5" Class="mb-4">Actualizar Producto</MudText>
+
+    <MudForm @ref="_form" Model="@updateProducto">
+        <MudGrid Spacing="3">
+
+            <MudItem xs="12" sm="6">
+                <MudTextField @bind-Value="updateProducto.Nombre" Label="Nombre del producto" Variant="Variant.Outlined"
+                    Required="true" RequiredError="El nombre es obligatorio" />
+            </MudItem>
+
+            <MudItem xs="12" sm="6">
+                <MudTextField @bind-Value="updateProducto.SKU" Label="SKU" Variant="Variant.Outlined" Required="true"
+                    RequiredError="El SKU es obligatorio" />
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudTextField @bind-Value="updateProducto.Descripcion" Label="Descripción" Variant="Variant.Outlined"
+                    Lines="3" />
+            </MudItem>
+
+            <MudItem xs="12" sm="6">
+                <MudSelect @bind-Value="categoriaSeleccionada" Label="Categoría" Variant="Variant.Outlined"
+                    Required="true" T="int">
+                    @foreach (var cat in categorias?.Items ?? new())
+                    {
+                        <MudSelectItem T="int" Value="@cat.Id">
+                            @cat.Nombre
+                        </MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+
+            <MudItem xs="12" sm="6">
+                <MudNumericField @bind-Value="updateProducto.ProveedorId" Label="Proveedor ID"
+                    Variant="Variant.Outlined" Min="1" />
+            </MudItem>
+
+            <MudItem xs="12" sm="6">
+                <MudNumericField @bind-Value="updateProducto.StockActual" Label="Stock actual"
+                    Variant="Variant.Outlined" Min="0" Adornment="Adornment.End" AdornmentText="uds" />
+            </MudItem>
+
+            <MudItem xs="12" sm="6">
+                <MudNumericField @bind-Value="updateProducto.Precio" Label="Precio" Variant="Variant.Outlined" Min="0"
+                    Step="0.01M" Format="N2" Adornment="Adornment.Start" AdornmentText="€" />
+            </MudItem>
+
+        </MudGrid>
+
+        <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd" Class="mt-6">
+            <MudButton Variant="Variant.Outlined" Color="Color.Default" Href="/">
+                Volver
+            </MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@ActualizarProductoAsync"
+                StartIcon="@Icons.Material.Filled.Save">
+                Guardar cambios
+            </MudButton>
+        </MudStack>
+    </MudForm>
+</MudPaper>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private PagedResponse<CategoriaResponseDto> categorias = new()
+    {
+        Items = new List<CategoriaResponseDto>()
+    };
+
+    private MudForm? _form;
+    private ProductoResponseDto productoResponse = new();
+    private UpdateProductoDto updateProducto = new();
+
+    private int categoriaSeleccionada;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            productoResponse = await ProductoService.GetProductoByIdAsync(Id);
+            categorias = await CategoriaService.GetAllCategoriasAsync(1, 100);
+
+            updateProducto = new UpdateProductoDto
+            {
+                Nombre = productoResponse.Nombre,
+                SKU = productoResponse.SKU,
+                CategoriaId = productoResponse.CategoriaId,
+                Descripcion = productoResponse.Descripcion,
+                StockActual = productoResponse.StockActual,
+                ProveedorId = productoResponse.ProveedorId,
+                Precio = productoResponse.Precio
+            };
+
+            categoriaSeleccionada = productoResponse.CategoriaId;
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error al cargar: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task ActualizarProductoAsync()
+    {
+        try
+        {
+            // Pasar valor de la variable auxiliar al DTO
+            updateProducto.CategoriaId = categoriaSeleccionada;
+
+            await ProductoService.UpdateProductoAsync(Id, updateProducto);
+            Snackbar.Add("✅ Producto actualizado correctamente", Severity.Success);
+            NavigationManager.NavigateTo("/productos-lista");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"❌ Error: {ex.Message}", Severity.Error);
+        }
+    }
+}

@@ -1,0 +1,66 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider Theme="@AppTheme.Theme" />
+<MudDialogProvider />
+<MudPopoverProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+            OnClick="@ToggleDrawer" />
+        <MudText Typo="Typo.h5" Class="ml-3">InventoryAPI Dashboard</MudText>
+        <MudSpacer />
+    </MudAppBar>
+
+    <MudDrawer @bind-Open="drawerOpen" ClipMode="DrawerClipMode.Docked" Elevation="2" Color="Color.Surface">
+        <MudNavMenu Rounded="true" Margin="Margin.Dense" Color="Color.Info" Class="pa-4 mt-4">
+            <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">Home</MudNavLink>
+            <MudNavGroup Title="Productos" Expanded="false" Icon="@Icons.Material.Filled.Inventory">
+                <MudNavLink Href="/productos-lista" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.TableView">
+                    Listado productos</MudNavLink>
+                <MudNavLink Href="/productos-home" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Dashboard">
+                    Stats producto</MudNavLink>
+                <MudNavLink Href="/productos-crear" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">
+                    Añadir producto</MudNavLink>
+            </MudNavGroup>
+            <MudNavGroup Title="Categorias" Expanded="false" Icon="@Icons.Material.Filled.Category">
+                <MudNavLink Href="/categorias-lista" Match="NavLinkMatch.Prefix"
+                    Icon="@Icons.Material.Filled.TableView">Listado categoria</MudNavLink>
+                <MudNavLink Href="/categorias-home" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Dashboard">
+                    Stats categoria</MudNavLink>
+                <MudNavLink Href="/categorias-crear" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">
+                    Añadir categoria</MudNavLink>
+            </MudNavGroup>
+            <MudNavGroup Title="Proveedores" Expanded="false" Icon="@Icons.Material.Filled.Business">
+                <MudNavLink Href="/proveedores-lista" Match="NavLinkMatch.Prefix"
+                    Icon="@Icons.Material.Filled.TableView">Listado proveedor</MudNavLink>
+                <MudNavLink Href="/proveedores-home" Match="NavLinkMatch.Prefix"
+                    Icon="@Icons.Material.Filled.Dashboard">Stats proveedor</MudNavLink>
+                <MudNavLink Href="/proveedores-crear" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">
+                    Añadir proveedor</MudNavLink>
+            </MudNavGroup>
+            <MudNavGroup Title="Movimientos" Expanded="false" Icon="@Icons.Material.Filled.MoveUp">
+                <MudNavLink Href="/movimientos-lista" Match="NavLinkMatch.Prefix"
+                    Icon="@Icons.Material.Filled.TableView">Listado movimientos</MudNavLink>
+                <MudNavLink Href="/movimientos-home" Match="NavLinkMatch.Prefix"
+                    Icon="@Icons.Material.Filled.Dashboard">Stats movimientos</MudNavLink>
+            </MudNavGroup>
+        </MudNavMenu>
+    </MudDrawer>
+
+    <MudMainContent Class="BodyLayOut bg-dark-subtle">
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="p-2" Style="height: 100%;">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private bool drawerOpen = true;
+
+    private void ToggleDrawer()
+    {
+        drawerOpen = !drawerOpen;
+    }
+}

@@ -1,0 +1,228 @@
+﻿@page "/movimientos-lista"
+
+@using InventoryAPI_UI.Components.Dashboard
+@using InventoryAPI_UI.Models.MovimientoModel
+@using InventoryAPI_UI.Enums
+@using MudBlazor
+@using Refit
+@inject IMovimientoService MovimientoService
+@inject ISnackbar Snackbar
+
+<MudPaper Class="pa-4 mb-4">
+    <MudGrid>
+        <MudItem xs="12" sm="6" md="2">
+            <MudDatePicker Label="Fecha desde"
+                           @bind-Date="fechaDesdeFilter"
+                           DateFormat="yyyy-MM-dd"
+                           Variant="Variant.Outlined" />
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="2">
+            <MudDatePicker Label="Fecha hasta"
+                           @bind-Date="fechaHastaFilter"
+                           DateFormat="yyyy-MM-dd"
+                           Variant="Variant.Outlined" />
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="2">
+            <MudSelect T="TipoMovimiento?"
+                       Label="Tipo de movimiento"
+                       @bind-Value="tipoFilter"
+                       Variant="Variant.Outlined"
+                       Clearable="true">
+                <MudSelectItem T="TipoMovimiento?" Value="@((TipoMovimiento?)null)">Todos</MudSelectItem>
+                <MudSelectItem T="TipoMovimiento?" Value="TipoMovimiento.Entrada">Entrada</MudSelectItem>
+                <MudSelectItem T="TipoMovimiento?" Value="TipoMovimiento.Salida">Salida</MudSelectItem>
+                <MudSelectItem T="TipoMovimiento?" Value="TipoMovimiento.AjustePositivo">Ajuste Positivo</MudSelectItem>
+                <MudSelectItem T="TipoMovimiento?" Value="TipoMovimiento.AjusteNegativo">Ajuste Negativo</MudSelectItem>
+            </MudSelect>
+        </MudItem>
+       
+
+        <MudItem xs="12" sm="6" md="2">
+            <MudTextField T="int?"
+                          @bind-Value="productoIdFilter"
+                          Label="ID Producto"
+                          Placeholder="Ej: 1"
+                          Variant="Variant.Outlined"
+                          InputType="InputType.Number" />
+        </MudItem>
+
+        <MudItem xs="4" Class="d-flex align-content-center justify-content-around h-25 m-auto">
+            <MudButton Variant="Variant.Outlined"
+                       Color="Color.Secondary"
+                       OnClick="ClearFilters"
+                       StartIcon="@Icons.Material.Filled.Clear">
+                Limpiar
+            </MudButton>
+
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       OnClick="ApplyFilters"
+                       StartIcon="@Icons.Material.Filled.Filter">
+                Aplicar Filtros
+            </MudButton>
+        </MudItem>
+    </MudGrid>
+</MudPaper>
+
+<MudDataGrid T="MovimientoResponseDto"
+                @ref="dataGrid"
+                ServerData="@LoadServerData"
+                RowsPerPage="10"
+                Hover="true"
+                Striped="true"
+                SortMode="SortMode.Multiple">
+
+    <Columns>
+        <PropertyColumn Property="x => x.Id" Title="ID" Sortable="true"/>
+
+        <PropertyColumn Property="x => x.ProductoNombre" Title="Producto" Sortable="true" />
+
+        <PropertyColumn Property="x => x.ProveedorNombre" Title="Proveedor" Sortable="true" />
+
+        <PropertyColumn Property="x => x.Fecha" Title="Fecha" Sortable="true">
+            <CellTemplate>
+                @context.Item.Fecha.ToString("dd/MM/yyyy HH:mm")
+            </CellTemplate>
+        </PropertyColumn>
+
+        <PropertyColumn Property="x => x.Tipo" Title="Tipo" Sortable="true">
+        </PropertyColumn>
+
+        <PropertyColumn Property="x => x.Cantidad" Title="Cantidad" Sortable="true">
+            <CellTemplate>
+                @{
+                    var esPositivo = context.Item.Tipo == TipoMovimiento.Entrada ||
+                    context.Item.Tipo == TipoMovimiento.AjustePositivo;
+                    var colorCantidad = esPositivo ? Color.Success : Color.Error;
+                    var signo = esPositivo ? "+" : "-";
+                }
+                <MudText Color="@colorCantidad" Style="font-weight: 600;">
+                    @signo@context.Item.Cantidad
+                </MudText>
+            </CellTemplate>
+        </PropertyColumn>
+
+        <PropertyColumn Property="x => x.Razon" Title="Razón" Sortable="false" />
+    </Columns>
+
+    <PagerContent>
+        <MudDataGridPager T="MovimientoResponseDto" />
+    </PagerContent>
+
+    <LoadingContent>
+        <MudProgressCircular Indeterminate="true" Color="Color.Primary" Class="ma-4" />
+    </LoadingContent>
+
+    <NoRecordsContent>
+        <MudText Align="Align.Center" Class="pa-8">
+            No se encontraron movimientos con los filtros actuales
+        </MudText>
+    </NoRecordsContent>
+</MudDataGrid>
+
+@code {
+    private MudDataGrid<MovimientoResponseDto>? dataGrid;
+
+    // Variables para los filtros
+    private DateTime? fechaDesdeFilter;
+    private DateTime? fechaHastaFilter;
+    private TipoMovimiento? tipoFilter;
+    private int? productoIdFilter;
+
+    private async Task<GridData<MovimientoResponseDto>> LoadServerData(GridState<MovimientoResponseDto> state)
+    {
+        try
+        {
+            // Mapear el ordenamiento de MudDataGrid a los parámetros de la API
+            string? orderBy = null;
+            string? order = null;
+
+            if (state.SortDefinitions?.Count > 0)
+            {
+                var sortDefinition = state.SortDefinitions.First();
+
+                orderBy = sortDefinition.SortBy switch
+                {
+                    "Id" => "id",
+                    "ProductoNombre" => "productoNombre",
+                    "ProveedorNombre" => "proveedorNombre",
+                    "Fecha" => "fecha",
+                    "Tipo" => "tipo",
+                    "Cantidad" => "cantidad",
+                    _ => null 
+                };
+
+                order = sortDefinition.Descending ? "desc" : "asc";
+            }
+
+            DateTimeOffset? fechaDesdeParam = fechaDesdeFilter.HasValue
+                ? new DateTimeOffset(fechaDesdeFilter.Value)
+                : null;
+
+            DateTimeOffset? fechaHastaParam = fechaHastaFilter.HasValue
+                ? new DateTimeOffset(fechaHastaFilter.Value.AddDays(1).AddTicks(-1))
+                : null;
+
+            // Llamar al servicio con los filtros actuales
+            var response = await MovimientoService.GetAllMovimientosAsync(
+                fechaDesde: fechaDesdeParam,
+                fechaHasta: fechaHastaParam,
+                tipo: tipoFilter,
+                productoId: productoIdFilter,
+                orderBy: orderBy ?? "fecha", 
+                order: order ?? "desc", 
+                pageNumber: state.Page + 1, 
+                pageSize: state.PageSize
+            );
+
+            if (response == null)
+            {
+                Snackbar.Add("No se recibió respuesta del servicio", Severity.Warning);
+                return new GridData<MovimientoResponseDto>
+                {
+                    Items = new List<MovimientoResponseDto>(),
+                    TotalItems = 0
+                };
+            }
+
+            return new GridData<MovimientoResponseDto>
+            {
+                Items = response.Items ?? new List<MovimientoResponseDto>(),
+                TotalItems = response.TotalCount
+            };
+        } catch (Exception ex)
+        {
+            Snackbar.Add($"Error cargando movimientos: {ex.Message}", Severity.Error);
+            return new GridData<MovimientoResponseDto>
+            {
+                Items = new List<MovimientoResponseDto>(),
+                TotalItems = 0
+            };
+        }
+    }
+
+    private async Task ApplyFilters()
+    {
+        if (dataGrid != null)
+        {
+            await dataGrid.ReloadServerData();
+            Snackbar.Add("Filtros aplicados", Severity.Info);
+        }
+    }
+
+    private async Task ClearFilters()
+    {
+        fechaDesdeFilter = null;
+        fechaHastaFilter = null;
+        tipoFilter = null;
+        productoIdFilter = null;
+
+        await ApplyFilters();
+        Snackbar.Add("Filtros reseteados", Severity.Info);
+    }
+   
+
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+}

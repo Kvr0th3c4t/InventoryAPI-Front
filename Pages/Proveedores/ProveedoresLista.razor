@@ -1,0 +1,115 @@
+﻿@page "/proveedores-lista"
+
+@using InventoryAPI_UI.Components.Dashboard
+@using InventoryAPI_UI.Models.CategoriaModel
+@using MudBlazor
+@inject IProveedorService ProveedorService
+@inject ISnackbar Snackbar
+
+<MudDataGrid T="ProveedorResponseDto"
+             @ref="dataGrid"
+             ServerData="@LoadServerData"
+             RowsPerPage="10"
+             Hover="true"
+             Striped="true"
+             SortMode="SortMode.Multiple">
+
+    <Columns>
+        <PropertyColumn Property="x => x.Id" Title="ID" Sortable="false" />
+
+        <PropertyColumn Property="x => x.Nombre" Title="Nombre" Sortable="true" />
+
+        <PropertyColumn Property="x => x.Email" Title="Email" Sortable="false" />
+
+        <PropertyColumn Property="x => x.Telefono" Title="Contacto" Sortable="false" />
+
+        <TemplateColumn Title="Acciones" Sortable="false">
+            <CellTemplate>
+                <MudTooltip Text="Editar proveedor">
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                   Color="Color.Primary"
+                                   Size="Size.Small"
+                                   @onclick="@(() => EditProveedor(context.Item.Id))" />
+                </MudTooltip>
+
+                <MudTooltip Text="Eliminar proveedor">
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                   Color="Color.Info"
+                                   Size="Size.Small"
+                                   Class="ml-1"
+                                   @onclick="@(() => DeleteProveedor(context.Item.Id))" />
+                </MudTooltip>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+
+    <PagerContent>
+        <MudDataGridPager T="ProveedorResponseDto" />
+    </PagerContent>
+
+    <LoadingContent>
+        <MudProgressCircular Indeterminate="true" Color="Color.Primary" Class="ma-4" />
+    </LoadingContent>
+
+    <NoRecordsContent>
+        <MudText Align="Align.Center" Class="pa-8">
+            No se encontraron productos con los filtros actuales
+        </MudText>
+    </NoRecordsContent>
+</MudDataGrid>
+
+@code {
+    private MudDataGrid<ProveedorResponseDto>? dataGrid;
+
+    private async Task<GridData<ProveedorResponseDto>> LoadServerData(GridState<ProveedorResponseDto> state)
+    {
+        try
+        {
+            // Llamar al servicio con todos los filtros
+            var response = await ProveedorService.GetAllProveedoresAsync(
+                pageNumber: state.Page + 1,
+                pageSize: state.PageSize
+            );
+
+            // Asegurarse de que la respuesta no sea nula
+            if (response == null)
+            {
+                return new GridData<ProveedorResponseDto>
+                {
+                    Items = new List<ProveedorResponseDto>(),
+                    TotalItems = 0
+                };
+            }
+
+            // Retornar los datos en el formato que espera MudDataGrid
+            return new GridData<ProveedorResponseDto>
+            {
+                Items = response.Items ?? new List<ProveedorResponseDto>(),
+                TotalItems = response.TotalCount
+            };
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error cargando productos: {ex.Message}", Severity.Error);
+            return new GridData<ProveedorResponseDto>
+            {
+                Items = new List<ProveedorResponseDto>(),
+                TotalItems = 0
+            };
+        }
+    }
+
+    private void EditProveedor(int id)
+    {
+        NavigationManager.NavigateTo($"/productos/editar/{id}");
+    }
+
+    private async void DeleteProveedor(int id)
+    {
+        await ProveedorService.DeleteProveedorAsync(id);
+        await dataGrid.ReloadServerData();
+    }
+
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+}
+

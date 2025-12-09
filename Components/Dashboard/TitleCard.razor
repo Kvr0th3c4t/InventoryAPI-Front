@@ -1,0 +1,14 @@
+﻿<MudGrid>
+    <MudItem xs="12">
+        <MudPaper>
+            <MudText Typo="Typo.h6" class="mt-4 ms-3 mb-2 p-1">
+                @Title
+            </MudText>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+}

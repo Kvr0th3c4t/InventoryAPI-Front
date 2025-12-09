@@ -1,0 +1,179 @@
+﻿@page "/movimientos-home"
+
+@using InventoryAPI_UI.Components.Dashboard
+@using InventoryAPI_UI.Enums
+@using InventoryAPI_UI.Models.StatsModels.MovimientosStatModel
+@using InventoryAPI_UI.Models.StatsModels.ProductosStatsModel
+@using InventoryAPI_UI.Services.StatsService.MovimientoStatsService
+@using InventoryAPI_UI.Services.StatsService.ProductoStatsService
+@inject IMovimientosStatsService MovimientosStatsService
+
+<PageTitle>Dashboard de productos</PageTitle>
+<TitleCard Title="Kpi's tipo movimientos"></TitleCard>
+@if (loading)
+{
+    <MudProgressCircular Indeterminate="true" />
+}
+else
+{
+    <MudGrid Spacing="2">
+        @foreach (var tipo in tipoMovimiento.Items)
+        {
+            <MudItem xs="12" sm="6" md="3">
+                <KpiCard Title=@tipo.TipoMovimiento.ToString() Value=@tipo.Cantidad.ToString("N0")
+                    Icon="@Icons.Material.Filled.Inventory" IconColor="Color.Primary" ValueColor="Color.Primary" />
+            </MudItem>
+        }
+    </MudGrid>
+}
+
+<TitleCard Title="Kpi's resumen de movimientos"></TitleCard>
+<MudGrid Spacing="2">
+    <MudItem xs="3">
+        <KpiCard Title="Total de movimientos" Value=@totalMovimientos.ToString() Icon="@Icons.Material.Filled.Info"
+            IconColor="Color.Tertiary" ValueColor="Color.Tertiary" />
+    </MudItem>
+    <MudItem xs="3">
+        <KpiCard Title="Total  entradas" Value=@entradasVsSalidas?.TotalEntradas.ToString()
+            Icon="@Icons.Material.Filled.Info" IconColor="Color.Tertiary" ValueColor="Color.Tertiary" />
+    </MudItem>
+    <MudItem xs="3">
+        <KpiCard Title="Total salidas" Value=@entradasVsSalidas?.TotalSalidas.ToString()
+            Icon="@Icons.Material.Filled.Info" IconColor="Color.Tertiary" ValueColor="Color.Tertiary" />
+    </MudItem>
+    <MudItem xs="3">
+        <KpiCard Title="Producto más movido" Value=@productoMasAjustes?.Nombre Icon="@Icons.Material.Filled.Info"
+            IconColor="Color.Tertiary" ValueColor="Color.Tertiary" />
+    </MudItem>
+</MudGrid>
+
+<TitleCard Title="Graficas agrupadas"></TitleCard>
+<MudGrid Spacing="2">
+    <MudItem xs="6">
+        <MudPaper Class="pa-4" Height="500px">
+            <MudText Typo="Typo.h6" class="mb-2"> Productos por proveedor</MudText>
+
+            <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" InputData="@dataProveedor"
+                InputLabels="@labelsProveedor">
+            </MudChart>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h6" Class="mb-4">Movimientos por Día</MudText>
+            <MudChart ChartType="ChartType.Line" ChartSeries="@_series" XAxisLabels="@_xAxisLabels" Width="100%"
+                Height="354px" ChartOptions="@_options" AxisChartOptions="@_axisChartOptions" />
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+<TitleCard Title="Productos con más movimientos"></TitleCard>
+<MudGrid Spacing="2" Class="mb-4">
+    <MudItem xs="12">
+        <MudTable Items="@productosMasMovidos?.OrderByDescending(item => item.TotalMovimientos)" Hover="true"
+            Breakpoint="Breakpoint.Sm" Loading="@loading" LoadingProgressColor="Color.Info">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Top 5 con más movimientos en los últimos 30 días</MudText>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Id</MudTh>
+                <MudTh>Nombre del producto</MudTh>
+                <MudTh>Total de movimientos</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Id producto">@context.ProductoId</MudTd>
+                <MudTd DataLabel="Nombre de producto">@context.NombreProducto</MudTd>
+                <MudTd DataLabel="Total movimientos">@context.TotalMovimientos movimientos</MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudItem>
+</MudGrid>
+
+@code
+{
+    //Variables KPI's Stock producto
+
+    private EntradasVsSalidasDto? entradasVsSalidas;
+    private int totalMovimientos = 0;
+    private PagedResponse<TipoMovimientoDto>? tipoMovimiento;
+    private ProductoResponseDto? productoMasAjustes;
+
+    //Variables KPI's info adicional
+    private List<ProductoMasMovidoDto>? productosMasMovidos;
+
+    //Flags
+    private bool loading = true;
+    private string? error = null;
+
+    //Variables de gráficas
+
+    private PagedResponse<MovimientoPorDiaDto>? movimientoPorDia;
+    private int _index = -1;
+    private ChartOptions _options = new ChartOptions
+    {
+        LineStrokeWidth = 3,
+        InterpolationOption = InterpolationOption.NaturalSpline,
+        YAxisLines = true,
+        YAxisFormat = "N0",
+        ChartPalette = new string[] { "#4c96f6" }
+    };
+
+    private AxisChartOptions _axisChartOptions = new AxisChartOptions();
+    private List<ChartSeries> _series = new List<ChartSeries>();
+    private string[] _xAxisLabels = { };
+    private PagedResponse<MovimientoPorProveedorDto>? movimientosPorProveedor;
+    private double[] dataProveedor = { };
+    private string[] labelsProveedor = { };
+
+    //Variables de Tablas
+    private List<ProductoResponseDto>? top5MasValiosos;
+    private List<ProductoResponseDto>? top5MasStock;
+    private List<ProductoResponseDto>? top5MenosStock;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            loading = true;
+
+            // Cargar datos de KPIs
+            tipoMovimiento = await MovimientosStatsService.GetTipoMovimientosAsync(1, 100);
+            entradasVsSalidas = await MovimientosStatsService.GetEntradasVsSalidasUltimos30DiasAsync();
+            totalMovimientos = await MovimientosStatsService.GetTotalMovimientosUltimos30DiasAsync();
+            productoMasAjustes = await MovimientosStatsService.GetProductoConMasAjustesAsync();
+
+            //Cargar info adicional
+            productosMasMovidos = await MovimientosStatsService.GetProductosMasMovidosAsync();
+
+            //Cargar info graficas
+            movimientosPorProveedor = await MovimientosStatsService.GetMovimientosPorProveedorAsync(1, 100);
+
+            dataProveedor = movimientosPorProveedor.Items.Select(item => (double)item.TotalMovimientos).ToArray();
+
+            labelsProveedor = movimientosPorProveedor.Items.Select(item => item.NombreProveedor).ToArray();
+
+            movimientoPorDia = await MovimientosStatsService.GetMovimientosPorDiaAsync(1, 100);
+
+            _series.Add(new ChartSeries()
+            {
+                Name = $"Movimientos ({movimientoPorDia.Items.First().Fecha:MMM} - {movimientoPorDia.Items.Last().Fecha:MMM})",
+                Data = movimientoPorDia.Items.Select(item => (double)item.TotalMovimientos).ToArray()
+            });
+
+            _xAxisLabels = movimientoPorDia.Items.Select(item => item.Fecha.ToString("dd")).ToArray();
+
+            // Opciones de Chart
+            _axisChartOptions.MatchBoundsToSize = true;
+            _series.ForEach(x => x.ShowDataMarkers = true);
+
+            //Cargar datos de Tabla
+
+            loading = false;
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+            loading = false;
+        }
+    }
+}

@@ -1,0 +1,92 @@
+﻿@page "/categorias-home"
+
+
+@using InventoryAPI_UI.Components.Dashboard
+@using InventoryAPI_UI.Models.StatsModels.MovimientosStatModel
+@using InventoryAPI_UI.Models.StatsModels.ProductosStatsModel
+@using InventoryAPI_UI.Services.StatsService.CategoriaStatsService
+@inject ICategoriaStatsService CategoriaStatsService
+
+<MudGrid Spacing="2">
+    <MudItem xs="6">
+        <TitleCard Title="Graficas agrupadas"></TitleCard>
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h6" class="mb-2"> Productos por categoria</MudText>
+
+            <MudChart ChartType="ChartType.Donut" Width="300px" Height="184px" InputData="@dataCategoria"
+                InputLabels="@labelsCategoria">
+            </MudChart>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="6">
+        <TitleCard Title="Kpi's inventario"></TitleCard>
+        <MudStack Spacing="2" class="d-flex justify-around">
+            <MudItem>
+                <KpiCard Title="Total Productos" Value=@totalCategoria.ToString("N0")
+                    Icon="@Icons.Material.Filled.Inventory" IconColor="Color.Primary" ValueColor="Color.Primary" />
+            </MudItem>
+            <MudItem>
+                <KpiCard Title="Categoría con más productos" Value=@categoriaMasproductos?.Nombre
+                    Icon="@Icons.Material.Filled.Info" IconColor="Color.Tertiary" ValueColor="Color.Tertiary" />
+            </MudItem>
+            <MudItem>
+                <KpiCard Title="Categoría con mayor valor" Value=@categoriaMayorValor?.Nombre
+                    Icon="@Icons.Material.Filled.Info" IconColor="Color.Tertiary" ValueColor="Color.Tertiary" />
+            </MudItem>
+        </MudStack>
+    </MudItem>
+
+
+</MudGrid>
+
+
+@code
+{
+    //Variables KPI's Categoria
+    private int totalCategoria = 0;
+    private CategoriaResponseDto? categoriaMasproductos;
+    private CategoriaResponseDto? categoriaMayorValor;
+
+    //Flags
+    private bool loading = true;
+    private string? error = null;
+
+    //Variables de gráficas
+
+    private PagedResponse<DistribucionCategoriaDto>? distribucionPorCategoria;
+    private double[] dataCategoria = { };
+    private string[] labelsCategoria = { };
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            loading = true;
+
+            // Cargar datos de KPIs
+
+            totalCategoria = await CategoriaStatsService.GetTotalCategoriasAsync();
+            categoriaMasproductos = await CategoriaStatsService.GetCategoriaConMasProductosAsync();
+            categoriaMayorValor = await CategoriaStatsService.GetCategoriaConMayorValorAsync();
+
+            //Cargar info adicional
+
+            //Cargar info graficas
+            distribucionPorCategoria = await CategoriaStatsService.GetDistribucionProductosPorCategoriaAsync(1, 100);
+
+            dataCategoria = distribucionPorCategoria.Items.Select(item => (double)item.CantidadProductos).ToArray();
+
+            labelsCategoria = distribucionPorCategoria.Items.Select(item => item.NombreCategoria).ToArray();
+
+            loading = false;
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+            loading = false;
+        }
+    }
+}

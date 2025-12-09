@@ -1,0 +1,37 @@
+<MudPaper Elevation="2" Class="kpi-card pa-4">
+    <MudStack Spacing="2">
+
+        <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+            <MudText Typo="Typo.subtitle1" Color="Color.Default" Class="text-uppercase font-weight-bold">
+                @Title
+            </MudText>
+
+            @if (!string.IsNullOrEmpty(Icon))
+            {
+                <MudIcon Icon="@Icon" Color="@IconColor" Size="Size.Large" />
+            }
+        </MudStack>
+
+        <MudText Typo="Typo.h5" Color="@ValueColor" Class="font-weight-bold">
+            @Value
+        </MudText>
+    </MudStack>
+</MudPaper>
+
+@code {
+
+    [Parameter]
+    public string Title { get; set; } = "";
+
+    [Parameter]
+    public string Value { get; set; } = "0";
+
+    [Parameter]
+    public string Icon { get; set; } = Icons.Material.Filled.Info;
+
+    [Parameter]
+    public Color IconColor { get; set; } = Color.Primary;
+
+    [Parameter]
+    public Color ValueColor { get; set; } = Color.Default;
+}

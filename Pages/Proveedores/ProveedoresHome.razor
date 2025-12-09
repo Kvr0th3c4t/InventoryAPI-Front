@@ -1,0 +1,102 @@
+﻿@page "/proveedores-home"
+
+
+@using InventoryAPI_UI.Components.Dashboard
+@using InventoryAPI_UI.Models.StatsModels.MovimientosStatModel
+@using InventoryAPI_UI.Models.StatsModels.ProductosStatsModel
+@using InventoryAPI_UI.Models.StatsModels.ProveedoresStatsDto
+@using InventoryAPI_UI.Services.StatsService.CategoriaStatsService
+@using InventoryAPI_UI.Services.StatsService.ProductoStatsService
+@using InventoryAPI_UI.Services.StatsService.ProveedorStatsService
+@inject IProveedorStatsService ProveedorStatsService
+
+<TitleCard Title="Kpi's inventario"></TitleCard>
+<MudGrid>
+    <MudItem xs="6">
+        <KpiCard Title="Total Proveedores" Value=@totalProveedores.ToString("N0")
+            Icon="@Icons.Material.Filled.Inventory" IconColor="Color.Primary" ValueColor="Color.Primary" />
+    </MudItem>
+    <MudItem xs="6">
+        <KpiCard Title="Proveedor más activo" Value=@ProveedorMasActivo?.Nombre Icon="@Icons.Material.Filled.Info"
+            IconColor="Color.Tertiary" ValueColor="Color.Tertiary" />
+    </MudItem>
+</MudGrid>
+
+<TitleCard Title="Graficas agrupadas"></TitleCard>
+<MudGrid Spacing="2" class="mb-4">
+    <MudItem xs="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h6" class="mb-2"> Productos por proveedor</MudText>
+
+            <MudChart ChartType="ChartType.Donut" Width="300px" Height="184px" InputData="@dataProveedor"
+                InputLabels="@labelsProveedor">
+            </MudChart>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h6" class="mb-2"> Valor productos por proveedor</MudText>
+
+            <MudChart ChartType="ChartType.Donut" Width="300px" Height="184px" InputData="@dataValorProveedor"
+                InputLabels="@labelsValorProveedor">
+            </MudChart>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+
+@code
+{
+    //Variables KPI's Categoria
+    private int totalProveedores = 0;
+    private ProveedorResponseDto? ProveedorMasActivo;
+
+    //Flags
+    private bool loading = true;
+    private string? error = null;
+
+    //Variables de gráficas
+
+    private PagedResponse<DistribucionProveedorDto>? productosProProveedor;
+    private double[] dataProveedor = { };
+    private string[] labelsProveedor = { };
+
+    private PagedResponse<DistribucionValorProveedorDto>? valorProductoPorProveedor;
+    private double[] dataValorProveedor = { };
+    private string[] labelsValorProveedor = { };
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            loading = true;
+
+            // Cargar datos de KPIs
+
+            totalProveedores = await ProveedorStatsService.GetTotalProveedoresAsync();
+            ProveedorMasActivo = await ProveedorStatsService.GetProveedorMasActivoAsync();
+
+            //Cargar info graficas
+            productosProProveedor = await ProveedorStatsService.GetProductosPorProveedorAsync(1, 100);
+
+            dataProveedor = productosProProveedor.Items.Select(item => (double)item.CantidadProductos).ToArray();
+
+            labelsProveedor = productosProProveedor.Items.Select(item => item.NombreProveedor).ToArray();
+
+            valorProductoPorProveedor = await ProveedorStatsService.GetValorInventarioPorProveedorAsync(1, 100);
+
+            dataValorProveedor = valorProductoPorProveedor.Items.Select(item => (double)item.ValorTotal).ToArray();
+
+            labelsValorProveedor = valorProductoPorProveedor.Items.Select(item => item.NombreProveedor).ToArray();
+
+            loading = false;
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+            loading = false;
+        }
+    }
+}

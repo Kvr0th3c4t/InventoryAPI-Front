@@ -1,0 +1,113 @@
+﻿@page "/categorias-lista"
+
+@using InventoryAPI_UI.Components.Dashboard
+@using InventoryAPI_UI.Models.CategoriaModel
+@using MudBlazor
+@inject ICategoriaService CategoriaService
+@inject ISnackbar Snackbar
+
+<MudDataGrid T="CategoriaResponseDto"
+             @ref="dataGrid"
+             ServerData="@LoadServerData"
+             RowsPerPage="10"
+             Hover="true"
+             Striped="true"
+             SortMode="SortMode.Multiple">
+
+    <Columns>
+        <PropertyColumn Property="x => x.Id" Title="ID" Sortable="false" />
+
+        <PropertyColumn Property="x => x.Nombre" Title="Nombre" Sortable="true" />
+
+        <PropertyColumn Property="x => x.Descripcion" Title="Descripción" Sortable="false" />
+
+        <TemplateColumn Title="Acciones" Sortable="false">
+            <CellTemplate>
+                <MudTooltip Text="Editar producto">
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                   Color="Color.Primary"
+                                   Size="Size.Small"
+                                   @onclick="@(() => EditCategoria(context.Item.Id))" />
+                </MudTooltip>
+
+                <MudTooltip Text="Eliminar producto">
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                   Color="Color.Info"
+                                   Size="Size.Small"
+                                   Class="ml-1"
+                                   @onclick="@(() => DeleteCategoria(context.Item.Id))" />
+                </MudTooltip>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+
+    <PagerContent>
+        <MudDataGridPager T="CategoriaResponseDto" />
+    </PagerContent>
+
+    <LoadingContent>
+        <MudProgressCircular Indeterminate="true" Color="Color.Primary" Class="ma-4" />
+    </LoadingContent>
+
+    <NoRecordsContent>
+        <MudText Align="Align.Center" Class="pa-8">
+            No se encontraron productos con los filtros actuales
+        </MudText>
+    </NoRecordsContent>
+</MudDataGrid>
+
+@code {
+    private MudDataGrid<CategoriaResponseDto>? dataGrid;
+
+    private async Task<GridData<CategoriaResponseDto>> LoadServerData(GridState<CategoriaResponseDto> state)
+    {
+        try
+        {
+            // Llamar al servicio con todos los filtros
+            var response = await CategoriaService.GetAllCategoriasAsync(
+                pageNumber: state.Page + 1,
+                pageSize: state.PageSize
+            );
+
+            // Asegurarse de que la respuesta no sea nula
+            if (response == null)
+            {
+                return new GridData<CategoriaResponseDto>
+                {
+                    Items = new List<CategoriaResponseDto>(),
+                    TotalItems = 0
+                };
+            }
+
+            // Retornar los datos en el formato que espera MudDataGrid
+            return new GridData<CategoriaResponseDto>
+            {
+                Items = response.Items ?? new List<CategoriaResponseDto>(),
+                TotalItems = response.TotalCount
+            };
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error cargando productos: {ex.Message}", Severity.Error);
+            return new GridData<CategoriaResponseDto>
+            {
+                Items = new List<CategoriaResponseDto>(),
+                TotalItems = 0
+            };
+        }
+    }
+
+    private void EditCategoria(int id)
+    {
+        NavigationManager.NavigateTo($"/productos/editar/{id}");
+    }
+
+    private async void DeleteCategoria(int id)
+    {
+        await CategoriaService.DeleteCategoriaAsync(id);
+        await dataGrid.ReloadServerData();
+    }
+
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+}
+
