@@ -2,91 +2,134 @@
 
 @inject IMovimientosStatsService MovimientosStatsService
 
-<PageTitle>Dashboard de productos</PageTitle>
-<TitleCard Title="Kpi's tipo movimientos"></TitleCard>
-@if (loading)
-{
-    <MudProgressCircular Indeterminate="true" />
-}
-else
-{
-    <MudGrid Spacing="2">
-        @foreach (var tipo in tipoMovimiento.Items)
-        {
+<PageTitle>Dashboard - Movimientos</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-4">
+
+
+    @if (loading)
+    {
+        <MudProgressCircular Indeterminate="true" />
+    }
+    else if (error != null)
+    {
+        <MudAlert Severity="Severity.Error">@error</MudAlert>
+    }
+    else
+    {
+
+        <MudPaper Elevation="0" Class="pa-4 mb-4" Style="border-left: 4px solid var(--mud-palette-primary);">
+            <MudText Typo="Typo.h6" Color="Color.Primary">Kpi's tipo movimientos</MudText>
+        </MudPaper>
+
+        <MudGrid Spacing="3" Class="mb-6">
+            @foreach (var tipo in tipoMovimiento.Items)
+            {
+                <MudItem xs="12" sm="6" md="3">
+                    <KpiCard Title=@tipo.TipoMovimiento.ToString() Value=@tipo.Cantidad.ToString("N0")
+                        Icon="@Icons.Material.Filled.Inventory" IconColor="Color.Primary" ValueColor="Color.Primary" />
+                </MudItem>
+            }
+        </MudGrid>
+
+        <MudPaper Elevation="0" Class="pa-4 mb-4" Style="border-left: 4px solid var(--mud-palette-info);">
+            <MudText Typo="Typo.h6" Color="Color.Info">Kpi's resumen de movimientos</MudText>
+        </MudPaper>
+
+        <MudGrid Spacing="3" Class="mb-6">
             <MudItem xs="12" sm="6" md="3">
-                <KpiCard Title=@tipo.TipoMovimiento.ToString() Value=@tipo.Cantidad.ToString("N0")
-                    Icon="@Icons.Material.Filled.Inventory" IconColor="Color.Primary" ValueColor="Color.Primary" />
+                <KpiCard Title="Total de movimientos" Value=@totalMovimientos.ToString()
+                    Icon="@Icons.Material.Filled.SwapVert" IconColor="Color.Tertiary" ValueColor="Color.Tertiary" />
             </MudItem>
-        }
-    </MudGrid>
-}
+            <MudItem xs="12" sm="6" md="3">
+                <KpiCard Title="Total entradas" Value=@entradasVsSalidas?.TotalEntradas.ToString()
+                    Icon="@Icons.Material.Filled.ArrowUpward" IconColor="Color.Success" ValueColor="Color.Success" />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <KpiCard Title="Total salidas" Value=@entradasVsSalidas?.TotalSalidas.ToString()
+                    Icon="@Icons.Material.Filled.ArrowDownward" IconColor="Color.Error" ValueColor="Color.Error" />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <KpiCard Title="Producto más movido" Value=@productoMasAjustes?.Nombre
+                    Icon="@Icons.Material.Filled.TrendingUp" IconColor="Color.Warning" ValueColor="Color.Warning" />
+            </MudItem>
+        </MudGrid>
 
-<TitleCard Title="Kpi's resumen de movimientos"></TitleCard>
-<MudGrid Spacing="2">
-    <MudItem xs="3">
-        <KpiCard Title="Total de movimientos" Value=@totalMovimientos.ToString() Icon="@Icons.Material.Filled.Info"
-            IconColor="Color.Tertiary" ValueColor="Color.Tertiary" />
-    </MudItem>
-    <MudItem xs="3">
-        <KpiCard Title="Total  entradas" Value=@entradasVsSalidas?.TotalEntradas.ToString()
-            Icon="@Icons.Material.Filled.Info" IconColor="Color.Tertiary" ValueColor="Color.Tertiary" />
-    </MudItem>
-    <MudItem xs="3">
-        <KpiCard Title="Total salidas" Value=@entradasVsSalidas?.TotalSalidas.ToString()
-            Icon="@Icons.Material.Filled.Info" IconColor="Color.Tertiary" ValueColor="Color.Tertiary" />
-    </MudItem>
-    <MudItem xs="3">
-        <KpiCard Title="Producto más movido" Value=@productoMasAjustes?.Nombre Icon="@Icons.Material.Filled.Info"
-            IconColor="Color.Tertiary" ValueColor="Color.Tertiary" />
-    </MudItem>
-</MudGrid>
-
-<TitleCard Title="Graficas agrupadas"></TitleCard>
-<MudGrid Spacing="2">
-    <MudItem xs="6">
-        <MudPaper Class="pa-4" Height="500px">
-            <MudText Typo="Typo.h6" class="mb-2"> Productos por proveedor</MudText>
-
-            <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" InputData="@dataProveedor"
-                InputLabels="@labelsProveedor">
-            </MudChart>
+        <MudPaper Elevation="0" Class="pa-4 mb-4" Style="border-left: 4px solid var(--mud-palette-secondary);">
+            <MudText Typo="Typo.h6" Color="Color.Secondary">Gráficas agrupadas</MudText>
         </MudPaper>
-    </MudItem>
-    <MudItem xs="6">
-        <MudPaper Class="pa-4">
-            <MudText Typo="Typo.h6" Class="mb-4">Movimientos por Día</MudText>
-            <MudChart ChartType="ChartType.Line" ChartSeries="@_series" XAxisLabels="@_xAxisLabels" Width="100%"
-                Height="354px" ChartOptions="@_options" AxisChartOptions="@_axisChartOptions" />
-        </MudPaper>
-    </MudItem>
-</MudGrid>
 
-<TitleCard Title="Productos con más movimientos"></TitleCard>
-<MudGrid Spacing="2" Class="mb-4">
-    <MudItem xs="12">
-        <MudTable Items="@productosMasMovidos?.OrderByDescending(item => item.TotalMovimientos)" Hover="true"
-            Breakpoint="Breakpoint.Sm" Loading="@loading" LoadingProgressColor="Color.Info">
-            <ToolBarContent>
-                <MudText Typo="Typo.h6">Top 5 con más movimientos en los últimos 30 días</MudText>
-            </ToolBarContent>
-            <HeaderContent>
-                <MudTh>Id</MudTh>
-                <MudTh>Nombre del producto</MudTh>
-                <MudTh>Total de movimientos</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Id producto">@context.ProductoId</MudTd>
-                <MudTd DataLabel="Nombre de producto">@context.NombreProducto</MudTd>
-                <MudTd DataLabel="Total movimientos">@context.TotalMovimientos movimientos</MudTd>
-            </RowTemplate>
-        </MudTable>
-    </MudItem>
-</MudGrid>
+        <MudGrid Spacing="3" Class="mb-6">
+            <MudItem xs="12" md="6">
+                <MudPaper Elevation="2" Class="pa-6" Style="height: 100%;">
+                    <MudText Typo="Typo.h6" Class="mb-4">
+                        <MudIcon Icon="@Icons.Material.Filled.PieChart" Class="mr-2" />
+                        Movimientos por proveedor
+                    </MudText>
+                    <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" InputData="@dataProveedor"
+                        InputLabels="@labelsProveedor" />
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudPaper Elevation="2" Class="pa-6" Style="height: 100%;">
+                    <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mb-4">
+                        <MudText Typo="Typo.h6">
+                            <MudIcon Icon="@Icons.Material.Filled.ShowChart" Class="mr-2" />
+                            Movimientos por Día
+                        </MudText>
+                        <MudChip T="string" Size="Size.Small" Color="Color.Info">Últimos 30 días</MudChip>
+                    </MudStack>
+                    <MudChart ChartType="ChartType.Line" ChartSeries="@_series" XAxisLabels="@_xAxisLabels" Width="100%"
+                        Height="300px" ChartOptions="@_options" AxisChartOptions="@_axisChartOptions" />
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+
+        <MudPaper Elevation="0" Class="pa-4 mb-4" Style="border-left: 4px solid var(--mud-palette-tertiary);">
+            <MudText Typo="Typo.h6" Color="Color.Tertiary">Productos con más movimientos</MudText>
+        </MudPaper>
+
+        <MudGrid Spacing="3" Class="mb-6">
+            <MudItem xs="12">
+                <MudPaper Elevation="2">
+                    <MudTable Items="@productosMasMovidos?.OrderByDescending(item => item.TotalMovimientos)" Hover="true"
+                        Breakpoint="Breakpoint.Sm" Loading="@loading" LoadingProgressColor="Color.Info" Elevation="0">
+                        <ToolBarContent>
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                <MudIcon Icon="@Icons.Material.Filled.StarRate" Color="Color.Warning" Size="Size.Small" />
+                                <MudText Typo="Typo.h6">Top 5 con más movimientos (últimos 30 días)</MudText>
+                            </MudStack>
+                        </ToolBarContent>
+                        <HeaderContent>
+                            <MudTh>ID</MudTh>
+                            <MudTh>Nombre del Producto</MudTh>
+                            <MudTh>
+                                <MudTableSortLabel T="string">Total Movimientos</MudTableSortLabel>
+                            </MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="ID">
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">@context.ProductoId</MudChip>
+                            </MudTd>
+                            <MudTd DataLabel="Nombre">
+                                <MudText Typo="Typo.body2">@context.NombreProducto</MudText>
+                            </MudTd>
+                            <MudTd DataLabel="Movimientos">
+                                <MudText Typo="Typo.body1" Color="Color.Primary">
+                                    <strong>@context.TotalMovimientos</strong> movimientos
+                                </MudText>
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    }
+</MudContainer>
 
 @code
 {
     //Variables KPI's Stock producto
-
     private EntradasVsSalidasDto? entradasVsSalidas;
     private int totalMovimientos = 0;
     private PagedResponse<TipoMovimientoDto>? tipoMovimiento;
@@ -100,7 +143,6 @@ else
     private string? error = null;
 
     //Variables de gráficas
-
     private PagedResponse<MovimientoPorDiaDto>? movimientoPorDia;
     private int _index = -1;
     private ChartOptions _options = new ChartOptions
@@ -141,9 +183,7 @@ else
 
             //Cargar info graficas
             movimientosPorProveedor = await MovimientosStatsService.GetMovimientosPorProveedorAsync(1, 100);
-
             dataProveedor = movimientosPorProveedor.Items.Select(item => (double)item.TotalMovimientos).ToArray();
-
             labelsProveedor = movimientosPorProveedor.Items.Select(item => item.NombreProveedor).ToArray();
 
             movimientoPorDia = await MovimientosStatsService.GetMovimientosPorDiaAsync(1, 100);
@@ -159,8 +199,6 @@ else
             // Opciones de Chart
             _axisChartOptions.MatchBoundsToSize = true;
             _series.ForEach(x => x.ShowDataMarkers = true);
-
-            //Cargar datos de Tabla
 
             loading = false;
         }

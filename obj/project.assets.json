@@ -2352,11 +2352,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\Adria\\OneDrive\\Escritorio\\InventoryAPI-UI\\InventoryAPI-UI\\InventoryAPI-UI.csproj",
+      "projectUniqueName": "C:\\Users\\Adria\\OneDrive\\Escritorio\\InventoryAPI-UI\\InventoryAPI-UI\\InventoryAPI-UI.csproj",
       "projectName": "InventoryAPI-UI",
-      "projectPath": "c:\\Users\\Adria\\OneDrive\\Escritorio\\InventoryAPI-UI\\InventoryAPI-UI\\InventoryAPI-UI.csproj",
+      "projectPath": "C:\\Users\\Adria\\OneDrive\\Escritorio\\InventoryAPI-UI\\InventoryAPI-UI\\InventoryAPI-UI.csproj",
       "packagesPath": "C:\\Users\\Adria\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\Adria\\OneDrive\\Escritorio\\InventoryAPI-UI\\InventoryAPI-UI\\obj\\",
+      "outputPath": "C:\\Users\\Adria\\OneDrive\\Escritorio\\InventoryAPI-UI\\InventoryAPI-UI\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -1,39 +1,49 @@
 ﻿@page "/categorias-home"
+
 @inject ICategoriaStatsService CategoriaStatsService
 
-<MudGrid Spacing="2">
-    <MudItem xs="6">
-        <TitleCard Title="Graficas agrupadas"></TitleCard>
-        <MudPaper Class="pa-4">
-            <MudText Typo="Typo.h6" class="mb-2"> Productos por categoria</MudText>
+<PageTitle>Dashboard - Categorías</PageTitle>
 
-            <MudChart ChartType="ChartType.Donut" Width="300px" Height="184px" InputData="@dataCategoria"
-                InputLabels="@labelsCategoria">
-            </MudChart>
-        </MudPaper>
-    </MudItem>
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-4">
 
-    <MudItem xs="6">
-        <TitleCard Title="Kpi's inventario"></TitleCard>
-        <MudStack Spacing="2" class="d-flex justify-around">
-            <MudItem>
-                <KpiCard Title="Total Productos" Value=@totalCategoria.ToString("N0")
-                    Icon="@Icons.Material.Filled.Inventory" IconColor="Color.Primary" ValueColor="Color.Primary" />
+    @if (loading)
+    {
+        <MudProgressCircular Indeterminate="true" />
+    }
+    else if (error != null)
+    {
+        <MudAlert Severity="Severity.Error">@error</MudAlert>
+    }
+    else
+    {
+        <MudGrid Spacing="3" Class="mb-6">
+            <MudItem xs="12" md="6">
+                <MudPaper Elevation="0" Class="pa-4 mb-4" Style="border-left: 4px solid var(--mud-palette-info);">
+                    <MudText Typo="Typo.h6" Color="Color.Info">Gráficas agrupadas</MudText>
+                </MudPaper>
+                <MudPaper Elevation="2" Class="pa-6">
+                    <MudText Typo="Typo.h6" Class="mb-4">Productos por categoría</MudText>
+                    <MudChart ChartType="ChartType.Donut" Width="300px" Height="170px" InputData="@dataCategoria"
+                        InputLabels="@labelsCategoria" />
+                </MudPaper>
             </MudItem>
-            <MudItem>
-                <KpiCard Title="Categoría con más productos" Value=@categoriaMasproductos?.Nombre
-                    Icon="@Icons.Material.Filled.Info" IconColor="Color.Tertiary" ValueColor="Color.Tertiary" />
+
+            <MudItem xs="12" md="6">
+                <MudPaper Elevation="0" Class="pa-4 mb-4" Style="border-left: 4px solid var(--mud-palette-primary);">
+                    <MudText Typo="Typo.h6" Color="Color.Primary">Kpi's inventario</MudText>
+                </MudPaper>
+                <MudStack Spacing="3">
+                    <KpiCard Title="Total Productos" Value=@totalCategoria.ToString("N0")
+                        Icon="@Icons.Material.Filled.Inventory" IconColor="Color.Primary" ValueColor="Color.Primary" />
+                    <KpiCard Title="Categoría con más productos" Value=@categoriaMasproductos?.Nombre
+                        Icon="@Icons.Material.Filled.Info" IconColor="Color.Tertiary" ValueColor="Color.Tertiary" />
+                    <KpiCard Title="Categoría con mayor valor" Value=@categoriaMayorValor?.Nombre
+                        Icon="@Icons.Material.Filled.Info" IconColor="Color.Tertiary" ValueColor="Color.Tertiary" />
+                </MudStack>
             </MudItem>
-            <MudItem>
-                <KpiCard Title="Categoría con mayor valor" Value=@categoriaMayorValor?.Nombre
-                    Icon="@Icons.Material.Filled.Info" IconColor="Color.Tertiary" ValueColor="Color.Tertiary" />
-            </MudItem>
-        </MudStack>
-    </MudItem>
-
-
-</MudGrid>
-
+        </MudGrid>
+    }
+</MudContainer>
 
 @code
 {
@@ -47,12 +57,9 @@
     private string? error = null;
 
     //Variables de gráficas
-
     private PagedResponse<DistribucionCategoriaDto>? distribucionPorCategoria;
     private double[] dataCategoria = { };
     private string[] labelsCategoria = { };
-
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -61,18 +68,14 @@
             loading = true;
 
             // Cargar datos de KPIs
-
             totalCategoria = await CategoriaStatsService.GetTotalCategoriasAsync();
             categoriaMasproductos = await CategoriaStatsService.GetCategoriaConMasProductosAsync();
             categoriaMayorValor = await CategoriaStatsService.GetCategoriaConMayorValorAsync();
-
-            //Cargar info adicional
 
             //Cargar info graficas
             distribucionPorCategoria = await CategoriaStatsService.GetDistribucionProductosPorCategoriaAsync(1, 100);
 
             dataCategoria = distribucionPorCategoria.Items.Select(item => (double)item.CantidadProductos).ToArray();
-
             labelsCategoria = distribucionPorCategoria.Items.Select(item => item.NombreCategoria).ToArray();
 
             loading = false;

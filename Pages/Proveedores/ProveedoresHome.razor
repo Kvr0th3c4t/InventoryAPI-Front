@@ -2,40 +2,64 @@
 
 @inject IProveedorStatsService ProveedorStatsService
 
-<TitleCard Title="Kpi's inventario"></TitleCard>
-<MudGrid>
-    <MudItem xs="6">
-        <KpiCard Title="Total Proveedores" Value=@totalProveedores.ToString("N0")
-            Icon="@Icons.Material.Filled.Inventory" IconColor="Color.Primary" ValueColor="Color.Primary" />
-    </MudItem>
-    <MudItem xs="6">
-        <KpiCard Title="Proveedor más activo" Value=@ProveedorMasActivo?.Nombre Icon="@Icons.Material.Filled.Info"
-            IconColor="Color.Tertiary" ValueColor="Color.Tertiary" />
-    </MudItem>
-</MudGrid>
+<PageTitle>Dashboard - Proveedores</PageTitle>
 
-<TitleCard Title="Graficas agrupadas"></TitleCard>
-<MudGrid Spacing="2" class="mb-4">
-    <MudItem xs="6">
-        <MudPaper Class="pa-4">
-            <MudText Typo="Typo.h6" class="mb-2"> Productos por proveedor</MudText>
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-4">
 
-            <MudChart ChartType="ChartType.Donut" Width="300px" Height="184px" InputData="@dataProveedor"
-                InputLabels="@labelsProveedor">
-            </MudChart>
+    @if (loading)
+    {
+        <MudProgressCircular Indeterminate="true" />
+    }
+    else if (error != null)
+    {
+        <MudAlert Severity="Severity.Error">@error</MudAlert>
+    }
+    else
+    {
+
+        <MudPaper Elevation="0" Class="pa-4 mb-4" Style="border-left: 4px solid var(--mud-palette-primary);">
+            <MudText Typo="Typo.h6" Color="Color.Primary">Kpi's inventario</MudText>
         </MudPaper>
-    </MudItem>
-    <MudItem xs="6">
-        <MudPaper Class="pa-4">
-            <MudText Typo="Typo.h6" class="mb-2"> Valor productos por proveedor</MudText>
 
-            <MudChart ChartType="ChartType.Donut" Width="300px" Height="184px" InputData="@dataValorProveedor"
-                InputLabels="@labelsValorProveedor">
-            </MudChart>
+        <MudGrid Spacing="3" Class="mb-6">
+            <MudItem xs="12" sm="6">
+                <KpiCard Title="Total Proveedores" Value=@totalProveedores.ToString("N0")
+                    Icon="@Icons.Material.Filled.Business" IconColor="Color.Primary" ValueColor="Color.Primary" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <KpiCard Title="Proveedor más activo" Value=@ProveedorMasActivo?.Nombre
+                    Icon="@Icons.Material.Filled.TrendingUp" IconColor="Color.Tertiary" ValueColor="Color.Tertiary" />
+            </MudItem>
+        </MudGrid>
+
+        <MudPaper Elevation="0" Class="pa-4 mb-4" Style="border-left: 4px solid var(--mud-palette-info);">
+            <MudText Typo="Typo.h6" Color="Color.Info">Gráficas agrupadas</MudText>
         </MudPaper>
-    </MudItem>
-</MudGrid>
 
+        <MudGrid Spacing="3" Class="mb-6">
+            <MudItem xs="12" md="6">
+                <MudPaper Elevation="2" Class="pa-6" Style="height: 100%;">
+                    <MudText Typo="Typo.h6" Class="mb-4">
+                        <MudIcon Icon="@Icons.Material.Filled.Inventory2" Class="mr-2" />
+                        Productos por proveedor
+                    </MudText>
+                    <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" InputData="@dataProveedor"
+                        InputLabels="@labelsProveedor" />
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudPaper Elevation="2" Class="pa-6" Style="height: 100%;">
+                    <MudText Typo="Typo.h6" Class="mb-4">
+                        <MudIcon Icon="@Icons.Material.Filled.Euro" Class="mr-2" />
+                        Valor productos por proveedor
+                    </MudText>
+                    <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" InputData="@dataValorProveedor"
+                        InputLabels="@labelsValorProveedor" />
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    }
+</MudContainer>
 
 @code
 {
@@ -48,7 +72,6 @@
     private string? error = null;
 
     //Variables de gráficas
-
     private PagedResponse<DistribucionProveedorDto>? productosProProveedor;
     private double[] dataProveedor = { };
     private string[] labelsProveedor = { };
@@ -57,8 +80,6 @@
     private double[] dataValorProveedor = { };
     private string[] labelsValorProveedor = { };
 
-
-
     protected override async Task OnInitializedAsync()
     {
         try
@@ -66,21 +87,16 @@
             loading = true;
 
             // Cargar datos de KPIs
-
             totalProveedores = await ProveedorStatsService.GetTotalProveedoresAsync();
             ProveedorMasActivo = await ProveedorStatsService.GetProveedorMasActivoAsync();
 
             //Cargar info graficas
             productosProProveedor = await ProveedorStatsService.GetProductosPorProveedorAsync(1, 100);
-
             dataProveedor = productosProProveedor.Items.Select(item => (double)item.CantidadProductos).ToArray();
-
             labelsProveedor = productosProProveedor.Items.Select(item => item.NombreProveedor).ToArray();
 
             valorProductoPorProveedor = await ProveedorStatsService.GetValorInventarioPorProveedorAsync(1, 100);
-
             dataValorProveedor = valorProductoPorProveedor.Items.Select(item => (double)item.ValorTotal).ToArray();
-
             labelsValorProveedor = valorProductoPorProveedor.Items.Select(item => item.NombreProveedor).ToArray();
 
             loading = false;

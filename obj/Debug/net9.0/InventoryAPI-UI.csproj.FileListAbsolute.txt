@@ -1121,10 +1121,10 @@ C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net
 C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\refint\InventoryAPI-UI.dll
 C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\InventoryAPI-UI.pdb
 C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\ref\InventoryAPI-UI.dll
-C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\bin\Debug\net9.0\wwwroot\_framework\InventoryAPI-UI.7o4ybs4f85.wasm
-C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\bin\Debug\net9.0\wwwroot\_framework\InventoryAPI-UI.iu4kfs5l3g.pdb
-C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\bin\Debug\net9.0\wwwroot\_framework\InventoryAPI-UI.7o4ybs4f85.wasm.gz
-C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\bin\Debug\net9.0\wwwroot\_framework\InventoryAPI-UI.iu4kfs5l3g.pdb.gz
-C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\29ww6hmcoj-7o4ybs4f85.gz
-C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\42m9wjuyq1-iu4kfs5l3g.gz
-C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\ptuknc2mlm-vkhsyckr0g.gz
+C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\bin\Debug\net9.0\wwwroot\_framework\InventoryAPI-UI.5qprp13mpe.wasm
+C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\bin\Debug\net9.0\wwwroot\_framework\InventoryAPI-UI.yngtblnhkr.pdb
+C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\bin\Debug\net9.0\wwwroot\_framework\InventoryAPI-UI.5qprp13mpe.wasm.gz
+C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\bin\Debug\net9.0\wwwroot\_framework\InventoryAPI-UI.yngtblnhkr.pdb.gz
+C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\29ww6hmcoj-5qprp13mpe.gz
+C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\42m9wjuyq1-yngtblnhkr.gz
+C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\ptuknc2mlm-jwtwf5v5lo.gz
