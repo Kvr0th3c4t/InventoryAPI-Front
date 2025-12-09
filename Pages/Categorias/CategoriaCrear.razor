@@ -1,56 +1,69 @@
 @page "/categorias-crear"
+
 @inject ICategoriaService CategoriaService
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 
-<MudPaper Elevation="2" Class="pa-6">
-    <MudText Typo="Typo.h5" Class="mb-4">Crear Categoria</MudText>
+<PageTitle>Crear Categoría</PageTitle>
 
-    <MudForm @ref="_form" Model="@createCategoriaDto">
-        <MudGrid Spacing="3">
-
-            <MudItem xs="12">
-                <MudTextField @bind-Value="createCategoriaDto.Nombre" Label="Nombre de la categoria"
-                    Variant="Variant.Outlined" Required="true" RequiredError="El nombre es obligatorio" />
-            </MudItem>
-
-            <MudItem xs="12">
-                <MudTextField @bind-Value="createCategoriaDto.Descripcion" Label="Descripción"
-                    Variant="Variant.Outlined" Lines="3" />
-            </MudItem>
-
-        </MudGrid>
-
-        <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd" Class="mt-6">
-            <MudButton StartIcon="@Icons.Material.Filled.ArrowBack" Variant="Variant.Outlined" Color="Color.Default"
-                Href="/categorias-lista">
-                Volver
-            </MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CreateProductoAsync"
-                StartIcon="@Icons.Material.Filled.Add">
-                Crear categoria
-            </MudButton>
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudPaper Elevation="2" Class="pa-6">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4">
+            <MudIcon Icon="@Icons.Material.Filled.Add" Size="Size.Large" Color="Color.Primary" />
+            <MudText Typo="Typo.h5">Nueva Categoría</MudText>
         </MudStack>
-    </MudForm>
-</MudPaper>
+
+        <MudDivider Class="mb-4" />
+
+        <MudForm @ref="_form" Model="@createCategoriaDto">
+            <MudGrid Spacing="3">
+
+                <MudItem xs="12">
+                    <MudTextField @bind-Value="createCategoriaDto.Nombre" Label="Nombre de la categoría"
+                        Variant="Variant.Outlined" Required="true" RequiredError="El nombre es obligatorio"
+                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Category" />
+                </MudItem>
+
+                <MudItem xs="12">
+                    <MudTextField @bind-Value="createCategoriaDto.Descripcion" Label="Descripción"
+                        Variant="Variant.Outlined" Lines="3" Adornment="Adornment.Start"
+                        AdornmentIcon="@Icons.Material.Filled.Description" />
+                </MudItem>
+
+            </MudGrid>
+
+            <MudDivider Class="my-4" />
+
+            <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd">
+                <MudButton Variant="Variant.Outlined" Color="Color.Default" StartIcon="@Icons.Material.Filled.ArrowBack"
+                    Href="/categorias-lista">
+                    Cancelar
+                </MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CreateCategoriaAsync"
+                    StartIcon="@Icons.Material.Filled.Add">
+                    Crear Categoría
+                </MudButton>
+            </MudStack>
+        </MudForm>
+    </MudPaper>
+</MudContainer>
 
 @code
 {
     private MudForm? _form;
     private CreateCategoriaDto createCategoriaDto = new();
 
-    private async Task CreateProductoAsync()
+    private async Task CreateCategoriaAsync()
     {
         try
         {
             await CategoriaService.AddCategoriaAsync(createCategoriaDto);
-
-            Snackbar.Add("✅ Producto creado correctamente", Severity.Success);
-            NavigationManager.NavigateTo("/productos-lista");
+            Snackbar.Add("✅ Categoría creada correctamente", Severity.Success);
+            NavigationManager.NavigateTo("/categorias-lista");
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"❌ Error: {ex.Message}", Severity.Error);
+            Snackbar.Add($"❌ Error al crear la categoría: {ex.Message}", Severity.Error);
         }
     }
 }

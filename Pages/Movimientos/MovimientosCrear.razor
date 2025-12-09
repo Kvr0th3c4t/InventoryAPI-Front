@@ -1,76 +1,111 @@
 @page "/movimientos-crear"
+
 @inject IMovimientoService MovimientoService
 @inject IProveedorService ProveedorService
 @inject IProductoService ProductoService
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 
-<MudPaper Elevation="2" Class="pa-6">
-    <MudText Typo="Typo.h5" Class="mb-4">Crear Movimiento</MudText>
+<PageTitle>Crear Movimiento</PageTitle>
 
-    @if (loading)
-    {
-        <MudProgressCircular Indeterminate="true" />
-    }
-    else
-    {
-        <MudForm @ref="_form" Model="@createMovimientoDto">
-            <MudGrid Spacing="3">
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudPaper Elevation="2" Class="pa-6">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4">
+            <MudIcon Icon="@Icons.Material.Filled.Add" Size="Size.Large" Color="Color.Primary" />
+            <MudText Typo="Typo.h5">Nuevo Movimiento de Stock</MudText>
+        </MudStack>
 
-                <MudItem xs="12" sm="6">
-                    <MudSelect @bind-Value="createMovimientoDto.Tipo" Label="Tipo de movimiento" Variant="Variant.Outlined"
-                        Required="true" T="TipoMovimiento">
-                        @foreach (TipoMovimiento tipo in Enum.GetValues(typeof(TipoMovimiento)))
-                        {
-                            <MudSelectItem T="TipoMovimiento" Value="@tipo">
-                                @tipo.ToString()
-                            </MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
+        <MudDivider Class="mb-4" />
 
-                <MudItem xs="12" sm="6">
-                    <MudNumericField @bind-Value="createMovimientoDto.ProductoId" Label="ID del producto"
-                        Variant="Variant.Outlined" Required="true" Min="1" />
-                </MudItem>
-
-                <MudItem xs="12" sm="6">
-                    <MudSelect @bind-Value="proveedorSeleccionado" Label="Proveedor (opcional)" Variant="Variant.Outlined"
-                        T="int?" Clearable="true" Placeholder="Selecciona un proveedor">
-                        @foreach (var prov in proveedores?.Items ?? new())
-                        {
-                            <MudSelectItem T="int?" Value="@((int?)prov.Id)">
-                                @prov.Nombre
-                            </MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-
-                <MudItem xs="12" sm="6">
-                    <MudNumericField @bind-Value="createMovimientoDto.Cantidad" Label="Cantidad" Variant="Variant.Outlined"
-                        Required="true" Min="1" Adornment="Adornment.End" AdornmentText="uds" />
-                </MudItem>
-
-                <MudItem xs="12">
-                    <MudTextField @bind-Value="createMovimientoDto.Razon" Label="Razón (opcional)"
-                        Variant="Variant.Outlined" Lines="3" />
-                </MudItem>
-
-            </MudGrid>
-
-            <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd" Class="mt-6">
-                <MudButton StartIcon="@Icons.Material.Filled.ArrowBack" Variant="Variant.Outlined" Color="Color.Default"
-                    Href="/movimientos-lista">
-                    Cancelar
-                </MudButton>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CreateMovimientoAsync"
-                    Disabled="@saving" StartIcon="@Icons.Material.Filled.Add">
-                    @(saving ? "Creando..." : "Crear movimiento")
-                </MudButton>
+        @if (loading)
+        {
+            <MudStack AlignItems="AlignItems.Center" Class="pa-8">
+                <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
+                <MudText Typo="Typo.body1" Color="Color.Secondary" Class="mt-2">Cargando datos...</MudText>
             </MudStack>
-        </MudForm>
-    }
-</MudPaper>
+        }
+        else
+        {
+            <MudForm @ref="_form" Model="@createMovimientoDto">
+                <MudGrid Spacing="3">
+
+                    <MudItem xs="12" sm="6">
+                        <MudSelect @bind-Value="createMovimientoDto.Tipo" Label="Tipo de movimiento"
+                            Variant="Variant.Outlined" Required="true" T="TipoMovimiento" Adornment="Adornment.Start"
+                            AdornmentIcon="@Icons.Material.Filled.SwapVert">
+                            @foreach (TipoMovimiento tipo in Enum.GetValues(typeof(TipoMovimiento)))
+                            {
+                                <MudSelectItem T="TipoMovimiento" Value="@tipo">
+                                    @tipo.ToString()
+                                </MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+
+                    <MudItem xs="12" sm="6">
+                        <MudSelect @bind-Value="createMovimientoDto.ProductoId" Label="Producto" Variant="Variant.Outlined"
+                            Required="true" T="int" Adornment="Adornment.Start"
+                            AdornmentIcon="@Icons.Material.Filled.Inventory">
+                            @foreach (var prod in productos?.Items ?? new())
+                            {
+                                <MudSelectItem T="int" Value="@prod.Id">
+                                    @prod.Nombre (@prod.SKU)
+                                </MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+
+                    <MudItem xs="12" sm="6">
+                        <MudSelect @bind-Value="proveedorSeleccionado" Label="Proveedor (opcional)"
+                            Variant="Variant.Outlined" T="int?" Clearable="true" Placeholder="Selecciona un proveedor"
+                            Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Business">
+                            @foreach (var prov in proveedores?.Items ?? new())
+                            {
+                                <MudSelectItem T="int?" Value="@((int?)prov.Id)">
+                                    @prov.Nombre
+                                </MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+
+                    <MudItem xs="12" sm="6">
+                        <MudNumericField @bind-Value="createMovimientoDto.Cantidad" Label="Cantidad"
+                            Variant="Variant.Outlined" Required="true" Min="1" Adornment="Adornment.End" AdornmentText="uds"
+                            AdornmentIcon="@Icons.Material.Filled.Numbers" />
+                    </MudItem>
+
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="createMovimientoDto.Razon" Label="Razón (opcional)"
+                            Variant="Variant.Outlined" Lines="3" Adornment="Adornment.Start"
+                            AdornmentIcon="@Icons.Material.Filled.Description" />
+                    </MudItem>
+
+                </MudGrid>
+
+                <MudDivider Class="my-4" />
+
+                <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Default" StartIcon="@Icons.Material.Filled.ArrowBack"
+                        Href="/movimientos-lista" Disabled="@saving">
+                        Cancelar
+                    </MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CreateMovimientoAsync"
+                        Disabled="@saving" StartIcon="@(saving ? null : Icons.Material.Filled.Add)">
+                        @if (saving)
+                            {
+                                    <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                                    <span>Creando...</span>
+                            }
+                            else
+                            {
+                                    <span>Crear Movimiento</span>
+                            }
+                        </MudButton>
+                    </MudStack>
+                </MudForm>
+        }
+    </MudPaper>
+</MudContainer>
 
 @code
 {
@@ -86,6 +121,11 @@
         Items = new List<ProveedorResponseDto>()
     };
 
+    private PagedResponse<ProductoResponseDto> productos = new()
+    {
+        Items = new List<ProductoResponseDto>()
+    };
+
     private bool loading = true;
     private bool saving = false;
     private int? proveedorSeleccionado;
@@ -96,11 +136,12 @@
         {
             loading = true;
             proveedores = await ProveedorService.GetAllProveedoresAsync(1, 100);
+            productos = await ProductoService.GetAllProductosAsync(1, 100);
             loading = false;
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error al cargar: {ex.Message}", Severity.Error);
+            Snackbar.Add($"❌ Error al cargar datos: {ex.Message}", Severity.Error);
             loading = false;
         }
     }
@@ -110,26 +151,15 @@
         try
         {
             saving = true;
-
             createMovimientoDto.ProveedorId = proveedorSeleccionado;
 
-            Console.WriteLine("=== DATOS A ENVIAR ===");
-            Console.WriteLine($"Tipo: {createMovimientoDto.Tipo}");
-            Console.WriteLine($"ProductoId: {createMovimientoDto.ProductoId}");
-            Console.WriteLine($"Cantidad: {createMovimientoDto.Cantidad}");
-            Console.WriteLine($"ProveedorId: {createMovimientoDto.ProveedorId}");
-            Console.WriteLine($"Razon: {createMovimientoDto.Razon}");
-            Console.WriteLine("====================");
-
             await MovimientoService.AddMovimientoAsync(createMovimientoDto);
-
             Snackbar.Add("✅ Movimiento creado correctamente", Severity.Success);
             NavigationManager.NavigateTo("/movimientos-lista");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"ERROR COMPLETO: {ex}");
-            Snackbar.Add($"❌ Error: {ex.Message}", Severity.Error);
+            Snackbar.Add($"❌ Error al crear el movimiento: {ex.Message}", Severity.Error);
         }
         finally
         {

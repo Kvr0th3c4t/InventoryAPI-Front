@@ -4,58 +4,86 @@
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 
-<MudPaper Elevation="2" Class="pa-6">
-    <MudText Typo="Typo.h5" Class="mb-4">Crear Proveedor</MudText>
+<PageTitle>Crear Proveedor</PageTitle>
 
-    <MudForm @ref="_form" Model="@createProveedorDto">
-        <MudGrid Spacing="3">
-
-            <MudItem xs="12">
-                <MudTextField @bind-Value="createProveedorDto.Nombre" Label="Nombre del proveedor"
-                    Variant="Variant.Outlined" Required="true" RequiredError="El nombre es obligatorio" />
-            </MudItem>
-
-            <MudItem xs="12">
-                <MudTextField @bind-Value="createProveedorDto.Email" Label="Email" Variant="Variant.Outlined"
-                    InputType="InputType.Email" Required="true" RequiredError="El email es obligatorio" />
-            </MudItem>
-            <MudItem xs="12">
-                <MudTextField @bind-Value="createProveedorDto.Telefono" Label="Telefono" Variant="Variant.Outlined"
-                    InputType="InputType.Telephone" Required="true" RequiredError="El telefono es obligatorio" />
-            </MudItem>
-
-        </MudGrid>
-
-        <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd" Class="mt-6">
-            <MudButton StartIcon="@Icons.Material.Filled.ArrowBack" Variant="Variant.Outlined" Color="Color.Default"
-                Href="/proveedores-lista">
-                Volver
-            </MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CreateProductoAsync"
-                StartIcon="@Icons.Material.Filled.Add">
-                Crear proveedor
-            </MudButton>
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudPaper Elevation="2" Class="pa-6">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4">
+            <MudIcon Icon="@Icons.Material.Filled.Add" Size="Size.Large" Color="Color.Primary" />
+            <MudText Typo="Typo.h5">Nuevo Proveedor</MudText>
         </MudStack>
-    </MudForm>
-</MudPaper>
+
+        <MudDivider Class="mb-4" />
+
+        <MudForm @ref="_form" Model="@createProveedorDto">
+            <MudGrid Spacing="3">
+
+                <MudItem xs="12">
+                    <MudTextField @bind-Value="createProveedorDto.Nombre" Label="Nombre del proveedor"
+                        Variant="Variant.Outlined" Required="true" RequiredError="El nombre es obligatorio"
+                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Business" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="createProveedorDto.Email" Label="Email" Variant="Variant.Outlined"
+                        InputType="InputType.Email" Required="true" RequiredError="El email es obligatorio"
+                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Email" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="createProveedorDto.Telefono" Label="Teléfono" Variant="Variant.Outlined"
+                        InputType="InputType.Telephone" Required="true" RequiredError="El teléfono es obligatorio"
+                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Phone" />
+                </MudItem>
+
+            </MudGrid>
+
+            <MudDivider Class="my-4" />
+
+            <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd">
+                <MudButton Variant="Variant.Outlined" Color="Color.Default" StartIcon="@Icons.Material.Filled.ArrowBack"
+                    Href="/proveedores-lista" Disabled="@saving">
+                    Cancelar
+                </MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CreateProveedorAsync"
+                    Disabled="@saving" StartIcon="@(saving ? null : Icons.Material.Filled.Add)">
+                    @if (saving)
+                    {
+                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                        <span>Creando...</span>
+                    }
+                    else
+                    {
+                        <span>Crear Proveedor</span>
+                    }
+                </MudButton>
+            </MudStack>
+        </MudForm>
+    </MudPaper>
+</MudContainer>
 
 @code
 {
     private MudForm? _form;
     private CreateProveedorDto createProveedorDto = new();
+    private bool saving = false;
 
-    private async Task CreateProductoAsync()
+    private async Task CreateProveedorAsync()
     {
         try
         {
+            saving = true;
             await ProveedorService.AddProveedorAsync(createProveedorDto);
-
             Snackbar.Add("✅ Proveedor creado correctamente", Severity.Success);
             NavigationManager.NavigateTo("/proveedores-lista");
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"❌ Error: {ex.Message}", Severity.Error);
+            Snackbar.Add($"❌ Error al crear el proveedor: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            saving = false;
         }
     }
 }
