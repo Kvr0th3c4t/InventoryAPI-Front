@@ -2,7 +2,7 @@
 
 namespace InventoryAPI_UI.Models.MovimientoModel;
 
-public class CreateMovimientoDto
+public class CreateMovimientoStockDto
 {
     public int ProductoId { get; set; }
     public int? ProveedorId { get; set; }

@@ -13,7 +13,7 @@ public class MovimientoService : IMovimientoService
         _api = api;
     }
 
-    public async Task<MovimientoResponseDto> AddMovimientoAsync(CreateMovimientoDto createMovimientoDto)
+    public async Task<MovimientoResponseDto> AddMovimientoAsync(CreateMovimientoStockDto createMovimientoDto)
     {
         return await _api.CreateMovimientoAsync(createMovimientoDto);
     }

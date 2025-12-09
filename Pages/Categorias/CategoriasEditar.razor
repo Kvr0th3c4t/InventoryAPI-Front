@@ -11,12 +11,12 @@
         <MudGrid Spacing="3">
 
             <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="updateCategoria.Nombre" Label="Nombre del producto" Variant="Variant.Outlined"
+                <MudTextField @bind-Value="updateCategoria.Nombre" Label="Nombre de la categoria" Variant="Variant.Outlined"
                     Required="true" RequiredError="El nombre es obligatorio" />
             </MudItem>
 
             <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="updateCategoria.Descripcion" Label="SKU" Variant="Variant.Outlined" Required="true"
+                <MudTextField @bind-Value="updateCategoria.Descripcion" Label="Descripción" Variant="Variant.Outlined" Required="true"
                     RequiredError="La descripción es obligatoria" />
             </MudItem>
         </MudGrid>
@@ -68,8 +68,8 @@
             // Pasar valor de la variable auxiliar al DTO
 
             await CategoriaService.UpdateCategoriaAsync(Id, updateCategoria);
-            Snackbar.Add("✅ Producto actualizado correctamente", Severity.Success);
-            NavigationManager.NavigateTo("/productos-lista");
+            Snackbar.Add("✅ Categoria actualizada correctamente", Severity.Success);
+            NavigationManager.NavigateTo("/categorias-lista");
         }
         catch (Exception ex)
         {

@@ -92,8 +92,8 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJvZHVjdG9zXFByb2R1Y3Rvc0xpc3RhLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Adria/OneDrive/Escritorio/InventoryAPI-UI/InventoryAPI-UI/Pages/Proveedores/ProveedorCreate.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJvdmVlZG9yZXNcUHJvdmVlZG9yQ3JlYXRlLnJhem9y
+[C:/Users/Adria/OneDrive/Escritorio/InventoryAPI-UI/InventoryAPI-UI/Pages/Proveedores/ProveedorCrear.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJvdmVlZG9yZXNcUHJvdmVlZG9yQ3JlYXIucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Adria/OneDrive/Escritorio/InventoryAPI-UI/InventoryAPI-UI/Pages/Proveedores/ProveedorEditar.razor]

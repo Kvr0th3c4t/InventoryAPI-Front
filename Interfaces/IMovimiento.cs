@@ -19,7 +19,7 @@ public interface IMovimiento
         [Query] int pageSize = 10);
 
     [Post("/api/movimientosStock")]
-    Task<MovimientoResponseDto> CreateMovimientoAsync([Body] CreateMovimientoDto createMovimientoDto);
+    Task<MovimientoResponseDto> CreateMovimientoAsync([Body] CreateMovimientoStockDto createMovimientoDto);
 
     [Get("/api/movimientosStock/{id}")]
     Task<MovimientoResponseDto> GetMovimientoByIdAsync(int id);

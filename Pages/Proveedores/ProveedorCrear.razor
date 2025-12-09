@@ -6,13 +6,13 @@
 @inject ISnackbar Snackbar
 
 <MudPaper Elevation="2" Class="pa-6">
-    <MudText Typo="Typo.h5" Class="mb-4">Crear Categoria</MudText>
+    <MudText Typo="Typo.h5" Class="mb-4">Crear Proveedor</MudText>
 
     <MudForm @ref="_form" Model="@createProveedorDto">
         <MudGrid Spacing="3">
 
             <MudItem xs="12">
-                <MudTextField @bind-Value="createProveedorDto.Nombre" Label="Nombre de la categoria"
+                <MudTextField @bind-Value="createProveedorDto.Nombre" Label="Nombre del proveedor"
                     Variant="Variant.Outlined" Required="true" RequiredError="El nombre es obligatorio" />
             </MudItem>
 
@@ -51,8 +51,8 @@
         {
             await ProveedorService.AddProveedorAsync(createProveedorDto);
 
-            Snackbar.Add("✅ Producto creado correctamente", Severity.Success);
-            NavigationManager.NavigateTo("/productos-lista");
+            Snackbar.Add("✅ Proveedor creado correctamente", Severity.Success);
+            NavigationManager.NavigateTo("/proveedores-lista");
         }
         catch (Exception ex)
         {

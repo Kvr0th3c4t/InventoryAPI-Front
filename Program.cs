@@ -1,3 +1,4 @@
+using System.Text.Json;
 using InventoryAPI_UI;
 using InventoryAPI_UI.Interfaces;
 using InventoryAPI_UI.Interfaces.Stats;
@@ -27,8 +28,14 @@ builder.Services.AddRefitClient<ICategoria>()
     .ConfigureHttpClient(c => c.BaseAddress = new Uri(baseURl));
 builder.Services.AddRefitClient<IProveedor>()
     .ConfigureHttpClient(c => c.BaseAddress = new Uri(baseURl));
-builder.Services.AddRefitClient<IMovimiento>()
-    .ConfigureHttpClient(c => c.BaseAddress = new Uri(baseURl));
+builder.Services.AddRefitClient<IMovimiento>(new RefitSettings
+{
+    ContentSerializer = new SystemTextJsonContentSerializer(new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    })
+})
+.ConfigureHttpClient(c => c.BaseAddress = new Uri(baseURl));
 builder.Services.AddRefitClient<IProductoStats>()
     .ConfigureHttpClient(c => c.BaseAddress = new Uri(baseURl));
 builder.Services.AddRefitClient<ICategoriaStats>()

@@ -175,6 +175,7 @@
             precioPromedio = await ProductoStatsService.GetPrecioPromedio();
             precioMasAlto = await ProductoStatsService.GetPrecioMasAlto();
             precioMasBajo = await ProductoStatsService.GetPrecioMasBajo();
+            totalMovimientosUltimos30 = await ProductoStatsService.GetProductosUltimos30Ddias();
 
             //Cargar info adicional
             sinStock = await ProductoStatsService.GetProductosSinStock();

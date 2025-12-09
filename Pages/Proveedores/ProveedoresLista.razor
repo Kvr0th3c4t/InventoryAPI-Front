@@ -96,8 +96,16 @@
 
     private async void DeleteProveedor(int id)
     {
-        await ProveedorService.DeleteProveedorAsync(id);
-        await dataGrid.ReloadServerData();
+        try
+        {
+            await ProveedorService.DeleteProveedorAsync(id);
+            await dataGrid.ReloadServerData();
+            Snackbar.Add("Proveedor eliminado correctamente", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
     }
 
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;

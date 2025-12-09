@@ -94,8 +94,17 @@
 
     private async void DeleteCategoria(int id)
     {
-        await CategoriaService.DeleteCategoriaAsync(id);
-        await dataGrid.ReloadServerData();
+        try
+        {
+            await CategoriaService.DeleteCategoriaAsync(id);
+            await dataGrid.ReloadServerData();
+            Snackbar.Add("Categoria y productos asociados eliminados correctamente", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+
     }
 
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;

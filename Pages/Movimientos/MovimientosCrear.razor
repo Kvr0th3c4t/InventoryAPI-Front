@@ -8,72 +8,90 @@
 @inject ISnackbar Snackbar
 
 <MudPaper Elevation="2" Class="pa-6">
-    <MudText Typo="Typo.h5" Class="mb-4">Crear Categoria</MudText>
+    <MudText Typo="Typo.h5" Class="mb-4">Crear Movimiento</MudText>
 
-    <MudForm @ref="_form" Model="@createMovimientoDto">
-        <MudGrid Spacing="3">
+    @if (loading)
+    {
+        <MudProgressCircular Indeterminate="true" />
+    }
+    else
+    {
+        <MudForm @ref="_form" Model="@createMovimientoDto">
+            <MudGrid Spacing="3">
 
-            <MudItem xs="12">
-                <MudTextField @bind-Value="createMovimientoDto.ProductoId" Label="Id del producto"
-                    Variant="Variant.Outlined" Required="true" RequiredError="El Id del producto es obligatorio" />
-            </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect @bind-Value="createMovimientoDto.Tipo" Label="Tipo de movimiento" Variant="Variant.Outlined"
+                        Required="true" T="TipoMovimiento">
+                        @foreach (TipoMovimiento tipo in Enum.GetValues(typeof(TipoMovimiento)))
+                        {
+                            <MudSelectItem T="TipoMovimiento" Value="@tipo">
+                                @tipo.ToString()
+                            </MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
 
-            <MudItem xs="12">
-                <MudSelect @bind-Value="proveedorSeleccionado" Label="Proveedor" Variant="Variant.Outlined"
-                    Required="true" T="int?" Placeholder="Selecciona un proveedor">
-                    @foreach (var prov in proveedores?.Items ?? new())
-                    {
-                        <MudSelectItem T="int?" Value="@((int?)prov.Id)">
-                            @prov.Nombre
-                        </MudSelectItem>
-                    }
-                </MudSelect>
-            </MudItem>
-            <MudItem xs="12">
-                <MudSelect @bind-Value="createMovimientoDto.Tipo" Label="Tipo de movimiento" Variant="Variant.Outlined"
-                    Required="true" T="TipoMovimiento">
-                    @foreach (TipoMovimiento tipo in Enum.GetValues(typeof(TipoMovimiento)))
-                    {
-                        <MudSelectItem T="TipoMovimiento" Value="@tipo">
-                            @tipo.ToString()
-                        </MudSelectItem>
-                    }
-                </MudSelect>
-            </MudItem>
-            <MudItem xs="12">
-                <MudTextField @bind-Value="createMovimientoDto.Cantidad" Label="Cantidad" Variant="Variant.Outlined">
-                </MudTextField>
-            </MudItem>
-            <MudItem xs="12">
-                <MudTextField @bind-Value="createMovimientoDto.Razon" Label="Razón" Variant="Variant.Outlined">
-                </MudTextField>
-            </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudNumericField @bind-Value="createMovimientoDto.ProductoId" Label="ID del producto"
+                        Variant="Variant.Outlined" Required="true" Min="1" />
+                </MudItem>
 
-        </MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudSelect @bind-Value="proveedorSeleccionado" Label="Proveedor (opcional)" Variant="Variant.Outlined"
+                        T="int?" Clearable="true" Placeholder="Selecciona un proveedor">
+                        @foreach (var prov in proveedores?.Items ?? new())
+                        {
+                            <MudSelectItem T="int?" Value="@((int?)prov.Id)">
+                                @prov.Nombre
+                            </MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
 
-        <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd" Class="mt-6">
-            <MudButton StartIcon="@Icons.Material.Filled.ArrowBack" Variant="Variant.Outlined" Color="Color.Default"
-                Href="/movimientos-lista">
-                Volver
-            </MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CreateProductoAsync"
-                StartIcon="@Icons.Material.Filled.Add">
-                Crear movimiento
-            </MudButton>
-        </MudStack>
-    </MudForm>
+                <MudItem xs="12" sm="6">
+                    <MudNumericField @bind-Value="createMovimientoDto.Cantidad" Label="Cantidad" Variant="Variant.Outlined"
+                        Required="true" Min="1" Adornment="Adornment.End" AdornmentText="uds" />
+                </MudItem>
+
+                <MudItem xs="12">
+                    <MudTextField @bind-Value="createMovimientoDto.Razon" Label="Razón (opcional)"
+                        Variant="Variant.Outlined" Lines="3" />
+                </MudItem>
+
+            </MudGrid>
+
+            <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd" Class="mt-6">
+                <MudButton StartIcon="@Icons.Material.Filled.ArrowBack" Variant="Variant.Outlined" Color="Color.Default"
+                    Href="/movimientos-lista">
+                    Cancelar
+                </MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CreateMovimientoAsync"
+                    Disabled="@saving" StartIcon="@Icons.Material.Filled.Add">
+                    @(saving ? "Creando..." : "Crear movimiento")
+                </MudButton>
+            </MudStack>
+        </MudForm>
+    }
 </MudPaper>
 
 @code
 {
     private MudForm? _form;
-    private CreateMovimientoDto createMovimientoDto = new();
+    private CreateMovimientoStockDto createMovimientoDto = new()
+    {
+        Tipo = TipoMovimiento.Entrada,
+        Cantidad = 1
+    };
+
     private PagedResponse<ProveedorResponseDto> proveedores = new()
     {
         Items = new List<ProveedorResponseDto>()
     };
+
     private bool loading = true;
+    private bool saving = false;
     private int? proveedorSeleccionado;
+
     protected override async Task OnInitializedAsync()
     {
         try
@@ -88,19 +106,36 @@
             loading = false;
         }
     }
-    private async Task CreateProductoAsync()
+
+    private async Task CreateMovimientoAsync()
     {
         try
         {
+            saving = true;
+
             createMovimientoDto.ProveedorId = proveedorSeleccionado;
+
+            Console.WriteLine("=== DATOS A ENVIAR ===");
+            Console.WriteLine($"Tipo: {createMovimientoDto.Tipo}");
+            Console.WriteLine($"ProductoId: {createMovimientoDto.ProductoId}");
+            Console.WriteLine($"Cantidad: {createMovimientoDto.Cantidad}");
+            Console.WriteLine($"ProveedorId: {createMovimientoDto.ProveedorId}");
+            Console.WriteLine($"Razon: {createMovimientoDto.Razon}");
+            Console.WriteLine("====================");
+
             await MovimientoService.AddMovimientoAsync(createMovimientoDto);
 
-            Snackbar.Add("✅ Producto creado correctamente", Severity.Success);
-            NavigationManager.NavigateTo("/productos-lista");
+            Snackbar.Add("✅ Movimiento creado correctamente", Severity.Success);
+            NavigationManager.NavigateTo("/movimientos-lista");
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"ERROR COMPLETO: {ex}");
             Snackbar.Add($"❌ Error: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            saving = false;
         }
     }
 }

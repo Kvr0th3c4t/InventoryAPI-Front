@@ -9,6 +9,6 @@ public interface IMovimientoService
 {
     Task<PagedResponse<MovimientoResponseDto>> GetAllMovimientosAsync(DateTimeOffset? fechaDesde, DateTimeOffset? fechaHasta, TipoMovimiento? tipo, int? productoId, string orderBy, string order, int pageNumber, int pageSize);
     Task<MovimientoResponseDto> GetMovimientoByIdAsync(int id);
-    Task<MovimientoResponseDto> AddMovimientoAsync(CreateMovimientoDto createMovimientoDto);
+    Task<MovimientoResponseDto> AddMovimientoAsync(CreateMovimientoStockDto createMovimientoDto);
 }
 
