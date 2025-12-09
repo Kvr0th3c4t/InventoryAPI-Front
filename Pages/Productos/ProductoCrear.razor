@@ -61,8 +61,9 @@
             </MudGrid>
 
             <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd" Class="mt-6">
-                <MudButton Variant="Variant.Outlined" Color="Color.Default" Href="/productos-lista">
-                    Cancelar
+                <MudButton StartIcon="@Icons.Material.Filled.ArrowBack" Variant="Variant.Outlined" Color="Color.Default"
+                    Href="/productos-lista">
+                    Volver
                 </MudButton>
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CreateProductoAsync"
                     StartIcon="@Icons.Material.Filled.Add">
@@ -78,9 +79,7 @@
     private MudForm? _form;
     private CreateProductoDto createProductoDto = new();
     private int categoriaSeleccionada;
-
     private bool loading = true;
-
     private PagedResponse<CategoriaResponseDto> categorias = new()
     {
         Items = new List<CategoriaResponseDto>()
@@ -105,7 +104,6 @@
     {
         try
         {
-
             createProductoDto.CategoriaId = categoriaSeleccionada;
 
             await ProductoService.AddProductoAsync(createProductoDto);
@@ -117,6 +115,5 @@
         {
             Snackbar.Add($"❌ Error: {ex.Message}", Severity.Error);
         }
-
     }
 }

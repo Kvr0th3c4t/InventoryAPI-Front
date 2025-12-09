@@ -1,0 +1,56 @@
+@page "/categorias-crear"
+@inject ICategoriaService CategoriaService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+
+<MudPaper Elevation="2" Class="pa-6">
+    <MudText Typo="Typo.h5" Class="mb-4">Crear Categoria</MudText>
+
+    <MudForm @ref="_form" Model="@createCategoriaDto">
+        <MudGrid Spacing="3">
+
+            <MudItem xs="12">
+                <MudTextField @bind-Value="createCategoriaDto.Nombre" Label="Nombre de la categoria"
+                    Variant="Variant.Outlined" Required="true" RequiredError="El nombre es obligatorio" />
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudTextField @bind-Value="createCategoriaDto.Descripcion" Label="Descripción"
+                    Variant="Variant.Outlined" Lines="3" />
+            </MudItem>
+
+        </MudGrid>
+
+        <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd" Class="mt-6">
+            <MudButton StartIcon="@Icons.Material.Filled.ArrowBack" Variant="Variant.Outlined" Color="Color.Default"
+                Href="/categorias-lista">
+                Volver
+            </MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CreateProductoAsync"
+                StartIcon="@Icons.Material.Filled.Add">
+                Crear categoria
+            </MudButton>
+        </MudStack>
+    </MudForm>
+</MudPaper>
+
+@code
+{
+    private MudForm? _form;
+    private CreateCategoriaDto createCategoriaDto = new();
+
+    private async Task CreateProductoAsync()
+    {
+        try
+        {
+            await CategoriaService.AddCategoriaAsync(createCategoriaDto);
+
+            Snackbar.Add("✅ Producto creado correctamente", Severity.Success);
+            NavigationManager.NavigateTo("/productos-lista");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"❌ Error: {ex.Message}", Severity.Error);
+        }
+    }
+}
