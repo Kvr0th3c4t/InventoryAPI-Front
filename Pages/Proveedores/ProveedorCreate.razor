@@ -1,0 +1,62 @@
+@page "/proveedores-crear"
+@using InventoryAPI_UI.Interfaces
+
+@inject IProveedorService ProveedorService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+
+<MudPaper Elevation="2" Class="pa-6">
+    <MudText Typo="Typo.h5" Class="mb-4">Crear Categoria</MudText>
+
+    <MudForm @ref="_form" Model="@createProveedorDto">
+        <MudGrid Spacing="3">
+
+            <MudItem xs="12">
+                <MudTextField @bind-Value="createProveedorDto.Nombre" Label="Nombre de la categoria"
+                    Variant="Variant.Outlined" Required="true" RequiredError="El nombre es obligatorio" />
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudTextField @bind-Value="createProveedorDto.Email" Label="Email" Variant="Variant.Outlined"
+                    InputType="InputType.Email" Required="true" RequiredError="El email es obligatorio" />
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField @bind-Value="createProveedorDto.Telefono" Label="Telefono" Variant="Variant.Outlined"
+                    InputType="InputType.Telephone" Required="true" RequiredError="El telefono es obligatorio" />
+            </MudItem>
+
+        </MudGrid>
+
+        <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd" Class="mt-6">
+            <MudButton StartIcon="@Icons.Material.Filled.ArrowBack" Variant="Variant.Outlined" Color="Color.Default"
+                Href="/proveedores-lista">
+                Volver
+            </MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CreateProductoAsync"
+                StartIcon="@Icons.Material.Filled.Add">
+                Crear proveedor
+            </MudButton>
+        </MudStack>
+    </MudForm>
+</MudPaper>
+
+@code
+{
+    private MudForm? _form;
+    private CreateProveedorDto createProveedorDto = new();
+
+    private async Task CreateProductoAsync()
+    {
+        try
+        {
+            await ProveedorService.AddProveedorAsync(createProveedorDto);
+
+            Snackbar.Add("✅ Producto creado correctamente", Severity.Success);
+            NavigationManager.NavigateTo("/productos-lista");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"❌ Error: {ex.Message}", Severity.Error);
+        }
+    }
+}
