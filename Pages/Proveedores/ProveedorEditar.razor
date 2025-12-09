@@ -4,41 +4,55 @@
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 
-<MudPaper Elevation="2" Class="pa-6">
-    <MudText Typo="Typo.h5" Class="mb-4">Actualizar Proveedor</MudText>
-    <MudForm @ref="_form" Model="@updateProveedor" onValidSubmit="ActualizarProveedorAsync">
-        <MudGrid Spacing="3">
+<PageTitle>Editar Proveedor</PageTitle>
 
-            <MudItem xs="12">
-                <MudTextField @bind-Value="updateProveedor.Nombre" Label="Nombre del proveedor"
-                    Variant="Variant.Outlined" Required="true" RequiredError="El nombre es obligatorio" />
-            </MudItem>
-
-            <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="updateProveedor.Email" Label="Email" InputType="InputType.Email"
-                    Variant="Variant.Outlined" Required="true" RequiredError="El email es obligatorio"
-                    Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Email" />
-            </MudItem>
-
-            <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="updateProveedor.Telefono" Label="Teléfono" InputType="InputType.Telephone"
-                    Variant="Variant.Outlined" Adornment="Adornment.Start"
-                    AdornmentIcon="@Icons.Material.Filled.Phone" />
-            </MudItem>
-
-        </MudGrid>
-
-        <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd" Class="mt-6">
-            <MudButton Variant="Variant.Outlined" Color="Color.Default" Href="/proveedores-lista">
-                Volver
-            </MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@ActualizarProveedorAsync"
-                StartIcon="@Icons.Material.Filled.Save">
-                Guardar cambios
-            </MudButton>
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudPaper Elevation="2" Class="pa-6">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Size="Size.Large" Color="Color.Warning" />
+            <MudText Typo="Typo.h5">Editar Proveedor</MudText>
         </MudStack>
-    </MudForm>
-</MudPaper>
+
+        <MudDivider Class="mb-4" />
+
+        <MudForm @ref="_form" Model="@updateProveedor">
+            <MudGrid Spacing="3">
+
+                <MudItem xs="12">
+                    <MudTextField @bind-Value="updateProveedor.Nombre" Label="Nombre del proveedor"
+                        Variant="Variant.Outlined" Required="true" RequiredError="El nombre es obligatorio"
+                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Business" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="updateProveedor.Email" Label="Email" InputType="InputType.Email"
+                        Variant="Variant.Outlined" Required="true" RequiredError="El email es obligatorio"
+                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Email" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="updateProveedor.Telefono" Label="Teléfono"
+                        InputType="InputType.Telephone" Variant="Variant.Outlined" Adornment="Adornment.Start"
+                        AdornmentIcon="@Icons.Material.Filled.Phone" />
+                </MudItem>
+
+            </MudGrid>
+
+            <MudDivider Class="my-4" />
+
+            <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd">
+                <MudButton Variant="Variant.Outlined" Color="Color.Default" StartIcon="@Icons.Material.Filled.ArrowBack"
+                    Href="/proveedores-lista">
+                    Cancelar
+                </MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@ActualizarProveedorAsync"
+                    StartIcon="@Icons.Material.Filled.Save">
+                    Guardar Cambios
+                </MudButton>
+            </MudStack>
+        </MudForm>
+    </MudPaper>
+</MudContainer>
 
 @code {
     [Parameter]
@@ -48,14 +62,10 @@
     private ProveedorResponseDto proveedorResponse = new();
     private UpdateProveedorDto updateProveedor = new();
 
-    private bool loading = true;
-
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            loading = true;
-
             proveedorResponse = await ProveedorService.GetProveedorByIdAsync(Id);
 
             updateProveedor = new UpdateProveedorDto
@@ -64,13 +74,10 @@
                 Email = proveedorResponse.Email,
                 Telefono = proveedorResponse.Telefono
             };
-
-            loading = false;
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error al cargar: {ex.Message}", Severity.Error);
-            loading = false;
+            Snackbar.Add($"❌ Error al cargar el proveedor: {ex.Message}", Severity.Error);
         }
     }
 
@@ -78,15 +85,13 @@
     {
         try
         {
-
             await ProveedorService.UpdateProveedorAsync(Id, updateProveedor);
             Snackbar.Add("✅ Proveedor actualizado correctamente", Severity.Success);
             NavigationManager.NavigateTo("/proveedores-lista");
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"❌ Error: {ex.Message}", Severity.Error);
+            Snackbar.Add($"❌ Error al actualizar: {ex.Message}", Severity.Error);
         }
-
     }
 }

@@ -118,13 +118,13 @@
                 <TemplateColumn Title="Acciones" Sortable="false">
                     <CellTemplate>
                         <MudStack Row="true" Spacing="1">
-                            <MudTooltip Text="Ver detalles">
-                                <MudIconButton Icon="@Icons.Material.Filled.Visibility" Color="Color.Info"
-                                    Size="Size.Small" OnClick="@(() => ViewProduct(context.Item.Id))" />
-                            </MudTooltip>
                             <MudTooltip Text="Editar">
                                 <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Warning"
                                     Size="Size.Small" OnClick="@(() => EditProduct(context.Item.Id))" />
+                            </MudTooltip>
+                            <MudTooltip Text="Ver detalles">
+                                <MudIconButton Icon="@Icons.Material.Filled.Visibility" Color="Color.Info"
+                                    Size="Size.Small" OnClick="@(() => ViewProduct(context.Item.Id))" />
                             </MudTooltip>
                             <MudTooltip Text="Eliminar">
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"

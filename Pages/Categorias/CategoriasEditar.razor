@@ -4,34 +4,49 @@
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 
-<MudPaper Elevation="2" Class="pa-6">
-    <MudText Typo="Typo.h5" Class="mb-4">Actualizar Categoria</MudText>
+<PageTitle>Editar Categoría</PageTitle>
 
-    <MudForm @ref="_form" Model="@updateCategoria">
-        <MudGrid Spacing="3">
-
-            <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="updateCategoria.Nombre" Label="Nombre de la categoria" Variant="Variant.Outlined"
-                    Required="true" RequiredError="El nombre es obligatorio" />
-            </MudItem>
-
-            <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="updateCategoria.Descripcion" Label="Descripción" Variant="Variant.Outlined" Required="true"
-                    RequiredError="La descripción es obligatoria" />
-            </MudItem>
-        </MudGrid>
-
-        <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd" Class="mt-6">
-            <MudButton Variant="Variant.Outlined" Color="Color.Default" Href="/categorias-lista">
-                Volver
-            </MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@ActualizarProductoAsync"
-                StartIcon="@Icons.Material.Filled.Save">
-                Guardar cambios
-            </MudButton>
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudPaper Elevation="2" Class="pa-6">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Size="Size.Large" Color="Color.Warning" />
+            <MudText Typo="Typo.h5">Editar Categoría</MudText>
         </MudStack>
-    </MudForm>
-</MudPaper>
+
+        <MudDivider Class="mb-4" />
+
+        <MudForm @ref="_form" Model="@updateCategoria">
+            <MudGrid Spacing="3">
+
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="updateCategoria.Nombre" Label="Nombre de la categoría"
+                        Variant="Variant.Outlined" Required="true" RequiredError="El nombre es obligatorio"
+                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Category" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="updateCategoria.Descripcion" Label="Descripción"
+                        Variant="Variant.Outlined" Required="true" RequiredError="La descripción es obligatoria"
+                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Description" />
+                </MudItem>
+
+            </MudGrid>
+
+            <MudDivider Class="my-4" />
+
+            <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd">
+                <MudButton Variant="Variant.Outlined" Color="Color.Default" StartIcon="@Icons.Material.Filled.ArrowBack"
+                    Href="/categorias-lista">
+                    Cancelar
+                </MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@ActualizarCategoriaAsync"
+                    StartIcon="@Icons.Material.Filled.Save">
+                    Guardar Cambios
+                </MudButton>
+            </MudStack>
+        </MudForm>
+    </MudPaper>
+</MudContainer>
 
 @code {
     [Parameter]
@@ -40,7 +55,6 @@
     private MudForm? _form;
     private CategoriaResponseDto categoriaResponse = new();
     private UpdateCategoriaDto updateCategoria = new();
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -56,23 +70,21 @@
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error al cargar: {ex.Message}", Severity.Error);
+            Snackbar.Add($"❌ Error al cargar la categoría: {ex.Message}", Severity.Error);
         }
     }
 
-    private async Task ActualizarProductoAsync()
+    private async Task ActualizarCategoriaAsync()
     {
         try
         {
-            // Pasar valor de la variable auxiliar al DTO
-
             await CategoriaService.UpdateCategoriaAsync(Id, updateCategoria);
-            Snackbar.Add("✅ Categoria actualizada correctamente", Severity.Success);
+            Snackbar.Add("✅ Categoría actualizada correctamente", Severity.Success);
             NavigationManager.NavigateTo("/categorias-lista");
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"❌ Error: {ex.Message}", Severity.Error);
+            Snackbar.Add($"❌ Error al actualizar: {ex.Message}", Severity.Error);
         }
     }
 }

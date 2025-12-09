@@ -2,70 +2,97 @@
 
 @inject IProductoService ProductoService
 @inject ICategoriaService CategoriaService
+@inject IProveedorService ProveedorService
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 
-<MudPaper Elevation="2" Class="pa-6">
-    <MudText Typo="Typo.h5" Class="mb-4">Actualizar Producto</MudText>
+<PageTitle>Editar Producto</PageTitle>
 
-    <MudForm @ref="_form" Model="@updateProducto">
-        <MudGrid Spacing="3">
-
-            <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="updateProducto.Nombre" Label="Nombre del producto" Variant="Variant.Outlined"
-                    Required="true" RequiredError="El nombre es obligatorio" />
-            </MudItem>
-
-            <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="updateProducto.SKU" Label="SKU" Variant="Variant.Outlined" Required="true"
-                    RequiredError="El SKU es obligatorio" />
-            </MudItem>
-
-            <MudItem xs="12">
-                <MudTextField @bind-Value="updateProducto.Descripcion" Label="Descripción" Variant="Variant.Outlined"
-                    Lines="3" />
-            </MudItem>
-
-            <MudItem xs="12" sm="6">
-                <MudSelect @bind-Value="categoriaSeleccionada" Label="Categoría" Variant="Variant.Outlined"
-                    Required="true" T="int">
-                    @foreach (var cat in categorias?.Items ?? new())
-                    {
-                        <MudSelectItem T="int" Value="@cat.Id">
-                            @cat.Nombre
-                        </MudSelectItem>
-                    }
-                </MudSelect>
-            </MudItem>
-
-            <MudItem xs="12" sm="6">
-                <MudNumericField @bind-Value="updateProducto.ProveedorId" Label="Proveedor ID"
-                    Variant="Variant.Outlined" Min="1" />
-            </MudItem>
-
-            <MudItem xs="12" sm="6">
-                <MudNumericField @bind-Value="updateProducto.StockActual" Label="Stock actual"
-                    Variant="Variant.Outlined" Min="0" Adornment="Adornment.End" AdornmentText="uds" />
-            </MudItem>
-
-            <MudItem xs="12" sm="6">
-                <MudNumericField @bind-Value="updateProducto.Precio" Label="Precio" Variant="Variant.Outlined" Min="0"
-                    Step="0.01M" Format="N2" Adornment="Adornment.Start" AdornmentText="€" />
-            </MudItem>
-
-        </MudGrid>
-
-        <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd" Class="mt-6">
-            <MudButton Variant="Variant.Outlined" Color="Color.Default" Href="/productos-lista">
-                Volver
-            </MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@ActualizarProductoAsync"
-                StartIcon="@Icons.Material.Filled.Save">
-                Guardar cambios
-            </MudButton>
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudPaper Elevation="2" Class="pa-6">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Size="Size.Large" Color="Color.Warning" />
+            <MudText Typo="Typo.h5">Editar Producto</MudText>
         </MudStack>
-    </MudForm>
-</MudPaper>
+
+        <MudDivider Class="mb-4" />
+
+        <MudForm @ref="_form" Model="@updateProducto">
+            <MudGrid Spacing="3">
+
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="updateProducto.Nombre" Label="Nombre del producto"
+                        Variant="Variant.Outlined" Required="true" RequiredError="El nombre es obligatorio"
+                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Inventory" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="updateProducto.SKU" Label="SKU" Variant="Variant.Outlined"
+                        Required="true" RequiredError="El SKU es obligatorio" Adornment="Adornment.Start"
+                        AdornmentIcon="@Icons.Material.Filled.QrCode" />
+                </MudItem>
+
+                <MudItem xs="12">
+                    <MudTextField @bind-Value="updateProducto.Descripcion" Label="Descripción"
+                        Variant="Variant.Outlined" Lines="3" Adornment="Adornment.Start"
+                        AdornmentIcon="@Icons.Material.Filled.Description" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudSelect @bind-Value="categoriaSeleccionada" Label="Categoría" Variant="Variant.Outlined"
+                        Required="true" T="int" Adornment="Adornment.Start"
+                        AdornmentIcon="@Icons.Material.Filled.Category">
+                        @foreach (var cat in categorias?.Items ?? new())
+                        {
+                            <MudSelectItem T="int" Value="@cat.Id">
+                                @cat.Nombre
+                            </MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudSelect @bind-Value="updateProducto.ProveedorId" Label="Proveedor" Variant="Variant.Outlined"
+                        T="int?" Clearable="true" Adornment="Adornment.Start"
+                        AdornmentIcon="@Icons.Material.Filled.Business">
+                        @foreach (var prov in proveedores?.Items ?? new())
+                        {
+                            <MudSelectItem T="int?" Value="@prov.Id">
+                                @prov.Nombre
+                            </MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudNumericField @bind-Value="updateProducto.StockActual" Label="Stock actual"
+                        Variant="Variant.Outlined" Min="0" Adornment="Adornment.End" AdornmentText="uds"
+                        AdornmentIcon="@Icons.Material.Filled.Inventory2" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudNumericField @bind-Value="updateProducto.Precio" Label="Precio" Variant="Variant.Outlined"
+                        Min="0" Step="0.01M" Format="N2" Adornment="Adornment.Start" AdornmentText="€"
+                        AdornmentIcon="@Icons.Material.Filled.Euro" />
+                </MudItem>
+
+            </MudGrid>
+
+            <MudDivider Class="my-4" />
+
+            <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd">
+                <MudButton Variant="Variant.Outlined" Color="Color.Default" StartIcon="@Icons.Material.Filled.ArrowBack"
+                    Href="/productos-lista">
+                    Cancelar
+                </MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@ActualizarProductoAsync"
+                    StartIcon="@Icons.Material.Filled.Save">
+                    Guardar Cambios
+                </MudButton>
+            </MudStack>
+        </MudForm>
+    </MudPaper>
+</MudContainer>
 
 @code {
     [Parameter]
@@ -74,6 +101,11 @@
     private PagedResponse<CategoriaResponseDto> categorias = new()
     {
         Items = new List<CategoriaResponseDto>()
+    };
+
+    private PagedResponse<ProveedorResponseDto> proveedores = new()
+    {
+        Items = new List<ProveedorResponseDto>()
     };
 
     private MudForm? _form;
@@ -88,6 +120,7 @@
         {
             productoResponse = await ProductoService.GetProductoByIdAsync(Id);
             categorias = await CategoriaService.GetAllCategoriasAsync(1, 100);
+            proveedores = await ProveedorService.GetAllProveedoresAsync(1, 100);
 
             updateProducto = new UpdateProductoDto
             {
@@ -104,7 +137,7 @@
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error al cargar: {ex.Message}", Severity.Error);
+            Snackbar.Add($"❌ Error al cargar el producto: {ex.Message}", Severity.Error);
         }
     }
 
@@ -112,7 +145,6 @@
     {
         try
         {
-            // Pasar valor de la variable auxiliar al DTO
             updateProducto.CategoriaId = categoriaSeleccionada;
 
             await ProductoService.UpdateProductoAsync(Id, updateProducto);
@@ -121,7 +153,7 @@
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"❌ Error: {ex.Message}", Severity.Error);
+            Snackbar.Add($"❌ Error al actualizar: {ex.Message}", Severity.Error);
         }
     }
 }
