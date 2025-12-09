@@ -1,107 +1,177 @@
 ﻿@page "/movimientos-lista"
+
 @inject IMovimientoService MovimientoService
 @inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
 
-<MudPaper Class="pa-4 mb-4">
-    <MudGrid>
-        <MudItem xs="12" sm="6" md="2">
-            <MudDatePicker Label="Fecha desde" @bind-Date="fechaDesdeFilter" DateFormat="yyyy-MM-dd"
-                Variant="Variant.Outlined" />
-        </MudItem>
+<PageTitle>Listado - Movimientos</PageTitle>
 
-        <MudItem xs="12" sm="6" md="2">
-            <MudDatePicker Label="Fecha hasta" @bind-Date="fechaHastaFilter" DateFormat="yyyy-MM-dd"
-                Variant="Variant.Outlined" />
-        </MudItem>
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-4">
 
-        <MudItem xs="12" sm="6" md="2">
-            <MudSelect T="TipoMovimiento ?" Label="Tipo de movimiento" @bind-Value="tipoFilter"
-                Variant="Variant.Outlined" Clearable="true">
-                <MudSelectItem T="TipoMovimiento ?" Value="@((TipoMovimiento?)null)">Todos</MudSelectItem>
-                <MudSelectItem T="TipoMovimiento ?" Value="TipoMovimiento.Entrada">Entrada</MudSelectItem>
-                <MudSelectItem T="TipoMovimiento ?" Value="TipoMovimiento.Salida">Salida</MudSelectItem>
-                <MudSelectItem T="TipoMovimiento ?" Value="TipoMovimiento.AjustePositivo">Ajuste Positivo
-                </MudSelectItem>
-                <MudSelectItem T="TipoMovimiento ?" Value="TipoMovimiento.AjusteNegativo">Ajuste Negativo
-                </MudSelectItem>
-            </MudSelect>
-        </MudItem>
-
-
-        <MudItem xs="12" sm="6" md="2">
-            <MudTextField T="int?" @bind-Value="productoIdFilter" Label="ID Producto" Placeholder="Ej: 1"
-                Variant="Variant.Outlined" InputType="InputType.Number" />
-        </MudItem>
-
-        <MudItem xs="4" Class="d-flex align-content-center justify-content-around h-25 m-auto">
-            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="ClearFilters"
-                StartIcon="@Icons.Material.Filled.Clear">
-                Limpiar
+    <MudPaper Elevation="2" Class="pa-4 mb-4">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-3">
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.FilterList" Class="mr-2" Size="Size.Small" />
+                Filtros
+            </MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
+                Href="/movimientos-crear">
+                Nuevo Movimiento
             </MudButton>
+        </MudStack>
 
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ApplyFilters"
-                StartIcon="@Icons.Material.Filled.Filter">
-                Aplicar Filtros
-            </MudButton>
-        </MudItem>
-    </MudGrid>
-</MudPaper>
+        <MudGrid Spacing="3">
+            <MudItem xs="12" sm="6" md="2">
+                <MudDatePicker Label="Fecha desde" @bind-Date="fechaDesdeFilter" DateFormat="yyyy-MM-dd"
+                    Variant="Variant.Outlined" Adornment="Adornment.Start"
+                    AdornmentIcon="@Icons.Material.Filled.CalendarToday" />
+            </MudItem>
 
-<MudDataGrid T="MovimientoResponseDto" @ref="dataGrid" ServerData="@LoadServerData" RowsPerPage="10" Hover="true"
-    Striped="true" SortMode="SortMode.Multiple">
+            <MudItem xs="12" sm="6" md="2">
+                <MudDatePicker Label="Fecha hasta" @bind-Date="fechaHastaFilter" DateFormat="yyyy-MM-dd"
+                    Variant="Variant.Outlined" Adornment="Adornment.Start"
+                    AdornmentIcon="@Icons.Material.Filled.CalendarToday" />
+            </MudItem>
 
-    <Columns>
-        <PropertyColumn Property="x => x.Id" Title="ID" Sortable="true" />
+            <MudItem xs="12" sm="6" md="2">
+                <MudSelect T="TipoMovimiento?" Label="Tipo de movimiento" @bind-Value="tipoFilter"
+                    Variant="Variant.Outlined" Clearable="true" Adornment="Adornment.Start"
+                    AdornmentIcon="@Icons.Material.Filled.SwapVert">
+                    <MudSelectItem T="TipoMovimiento?" Value="@((TipoMovimiento?)null)">Todos</MudSelectItem>
+                    <MudSelectItem T="TipoMovimiento?" Value="TipoMovimiento.Entrada">Entrada</MudSelectItem>
+                    <MudSelectItem T="TipoMovimiento?" Value="TipoMovimiento.Salida">Salida</MudSelectItem>
+                    <MudSelectItem T="TipoMovimiento?" Value="TipoMovimiento.AjustePositivo">Ajuste Positivo</MudSelectItem>
+                    <MudSelectItem T="TipoMovimiento?" Value="TipoMovimiento.AjusteNegativo">Ajuste Negativo</MudSelectItem>
+                </MudSelect>
+            </MudItem>
 
-        <PropertyColumn Property="x => x.ProductoNombre" Title="Producto" Sortable="true" />
+            <MudItem xs="12" sm="6" md="2">
+                <MudTextField T="int?" @bind-Value="productoIdFilter" Label="ID Producto" Placeholder="Ej: 1"
+                    Variant="Variant.Outlined" InputType="InputType.Number" Adornment="Adornment.Start"
+                    AdornmentIcon="@Icons.Material.Filled.Tag" />
+            </MudItem>
 
-        <PropertyColumn Property="x => x.ProveedorNombre" Title="Proveedor" Sortable="true" />
+            <MudItem xs="12" md="4" Class="d-flex align-center justify-end">
+                <MudButtonGroup Variant="Variant.Outlined" Size="Size.Medium">
+                    <MudButton Color="Color.Default" OnClick="ClearFilters" StartIcon="@Icons.Material.Filled.Clear">
+                        Limpiar
+                    </MudButton>
+                    <MudButton Color="Color.Primary" OnClick="ApplyFilters" StartIcon="@Icons.Material.Filled.Check">
+                        Aplicar
+                    </MudButton>
+                </MudButtonGroup>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
 
-        <PropertyColumn Property="x => x.Fecha" Title="Fecha" Sortable="true">
-            <CellTemplate>
-                @context.Item.Fecha.ToString("dd/MM/yyyy HH:mm")
-            </CellTemplate>
-        </PropertyColumn>
+    <MudPaper Elevation="2">
+        <MudDataGrid T="MovimientoResponseDto" @ref="dataGrid" ServerData="@LoadServerData" RowsPerPage="10" Hover="true"
+            Striped="true" SortMode="SortMode.Multiple" Elevation="0">
 
-        <PropertyColumn Property="x => x.Tipo" Title="Tipo" Sortable="true">
-        </PropertyColumn>
+            <Columns>
+                <PropertyColumn Property="x => x.Id" Title="ID" Sortable="true">
+                    <CellTemplate>
+                        <MudChip Size="Size.Small" Variant="Variant.Text">@context.Item.Id</MudChip>
+                    </CellTemplate>
+                </PropertyColumn>
 
-        <PropertyColumn Property="x => x.Cantidad" Title="Cantidad" Sortable="true">
-            <CellTemplate>
-                @{
-                    var esPositivo = context.Item.Tipo == TipoMovimiento.Entrada ||
-                    context.Item.Tipo == TipoMovimiento.AjustePositivo;
-                    var colorCantidad = esPositivo ? Color.Success : Color.Error;
-                    var signo = esPositivo ? "+" : "-";
-                }
-                <MudText Color="@colorCantidad" Style="font-weight: 600;">
-                    @signo@context.Item.Cantidad
-                </MudText>
-            </CellTemplate>
-        </PropertyColumn>
+                <PropertyColumn Property="x => x.ProductoNombre" Title="Producto" Sortable="true">
+                    <CellTemplate>
+                        <MudChip Size="Size.Small" Color="Color.Primary">@context.Item.ProductoNombre</MudChip>
+                    </CellTemplate>
+                </PropertyColumn>
 
-        <PropertyColumn Property="x => x.Razon" Title="Razón" Sortable="false" />
-    </Columns>
+                <PropertyColumn Property="x => x.ProveedorNombre" Title="Proveedor" Sortable="true">
+                    <CellTemplate>
+                        @if (!string.IsNullOrEmpty(context.Item.ProveedorNombre))
+                        {
+                            <MudChip Size="Size.Small" Color="Color.Tertiary">@context.Item.ProveedorNombre</MudChip>
+                        }
+                        else
+                        {
+                            <MudText Typo="Typo.body2" Color="Color.Secondary">Sin proveedor</MudText>
+                        }
+                    </CellTemplate>
+                </PropertyColumn>
 
-    <PagerContent>
-        <MudDataGridPager T="MovimientoResponseDto" />
-    </PagerContent>
+                <PropertyColumn Property="x => x.Fecha" Title="Fecha" Sortable="true">
+                    <CellTemplate>
+                        <MudText Typo="Typo.body2">
+                            @context.Item.Fecha.ToString("dd/MM/yyyy HH:mm")
+                        </MudText>
+                    </CellTemplate>
+                </PropertyColumn>
 
-    <LoadingContent>
-        <MudProgressCircular Indeterminate="true" Color="Color.Primary" Class="ma-4" />
-    </LoadingContent>
+                <PropertyColumn Property="x => x.Tipo" Title="Tipo" Sortable="true">
+                    <CellTemplate>
+                        @{
+                            var (colorTipo, iconoTipo) = context.Item.Tipo switch
+                            {
+                                TipoMovimiento.Entrada => (Color.Success, Icons.Material.Filled.ArrowDownward),
+                                TipoMovimiento.Salida => (Color.Error, Icons.Material.Filled.ArrowUpward),
+                                TipoMovimiento.AjustePositivo => (Color.Info, Icons.Material.Filled.Add),
+                                TipoMovimiento.AjusteNegativo => (Color.Warning, Icons.Material.Filled.Remove),
+                                _ => (Color.Default, Icons.Material.Filled.SwapVert)
+                            };
+                        }
+                        <MudChip Size="Size.Small" Color="@colorTipo" Icon="@iconoTipo">
+                            @context.Item.Tipo.ToString()
+                        </MudChip>
+                    </CellTemplate>
+                </PropertyColumn>
 
-    <NoRecordsContent>
-        <MudText Align="Align.Center" Class="pa-8">
-            No se encontraron movimientos con los filtros actuales
-        </MudText>
-    </NoRecordsContent>
-</MudDataGrid>
+                <PropertyColumn Property="x => x.Cantidad" Title="Cantidad" Sortable="true">
+                    <CellTemplate>
+                        @{
+                            var esPositivo = context.Item.Tipo == TipoMovimiento.Entrada ||
+                                context.Item.Tipo == TipoMovimiento.AjustePositivo;
+                            var colorCantidad = esPositivo ? Color.Success : Color.Error;
+                            var signo = esPositivo ? "+" : "-";
+                        }
+                        <MudChip Size="Size.Small" Color="@colorCantidad" Variant="Variant.Text">
+                            @signo@context.Item.Cantidad uds
+                        </MudChip>
+                    </CellTemplate>
+                </PropertyColumn>
+
+                <PropertyColumn Property="x => x.Razon" Title="Razón" Sortable="false">
+                    <CellTemplate>
+                        @if (!string.IsNullOrEmpty(context.Item.Razon))
+                        {
+                            <MudText Typo="Typo.body2">@context.Item.Razon</MudText>
+                        }
+                        else
+                        {
+                            <MudText Typo="Typo.body2" Color="Color.Secondary">Sin razón especificada</MudText>
+                        }
+                    </CellTemplate>
+                </PropertyColumn>
+
+            </Columns>
+
+            <PagerContent>
+                <MudDataGridPager T="MovimientoResponseDto" />
+            </PagerContent>
+
+            <LoadingContent>
+                <MudProgressCircular Indeterminate="true" Color="Color.Primary" Class="ma-4" />
+            </LoadingContent>
+
+            <NoRecordsContent>
+                <MudStack AlignItems="AlignItems.Center" Class="pa-8">
+                    <MudIcon Icon="@Icons.Material.Filled.SearchOff" Size="Size.Large" Color="Color.Secondary" />
+                    <MudText Typo="Typo.body1" Color="Color.Secondary">
+                        No se encontraron movimientos con los filtros actuales
+                    </MudText>
+                </MudStack>
+            </NoRecordsContent>
+        </MudDataGrid>
+    </MudPaper>
+</MudContainer>
 
 @code {
     private MudDataGrid<MovimientoResponseDto>? dataGrid;
 
-    // Variables para los filtros
     private DateTime? fechaDesdeFilter;
     private DateTime? fechaHastaFilter;
     private TipoMovimiento? tipoFilter;
@@ -111,7 +181,6 @@
     {
         try
         {
-            // Mapear el ordenamiento de MudDataGrid a los parámetros de la API
             string? orderBy = null;
             string? order = null;
 
@@ -134,28 +203,26 @@
             }
 
             DateTimeOffset? fechaDesdeParam = fechaDesdeFilter.HasValue
-            ? new DateTimeOffset(fechaDesdeFilter.Value)
-            : null;
+                ? new DateTimeOffset(fechaDesdeFilter.Value)
+                : null;
 
             DateTimeOffset? fechaHastaParam = fechaHastaFilter.HasValue
-            ? new DateTimeOffset(fechaHastaFilter.Value.AddDays(1).AddTicks(-1))
-            : null;
+                ? new DateTimeOffset(fechaHastaFilter.Value.AddDays(1).AddTicks(-1))
+                : null;
 
-            // Llamar al servicio con los filtros actuales
             var response = await MovimientoService.GetAllMovimientosAsync(
-            fechaDesde: fechaDesdeParam,
-            fechaHasta: fechaHastaParam,
-            tipo: tipoFilter,
-            productoId: productoIdFilter,
-            orderBy: orderBy ?? "fecha",
-            order: order ?? "desc",
-            pageNumber: state.Page + 1,
-            pageSize: state.PageSize
+                fechaDesde: fechaDesdeParam,
+                fechaHasta: fechaHastaParam,
+                tipo: tipoFilter,
+                productoId: productoIdFilter,
+                orderBy: orderBy ?? "fecha",
+                order: order ?? "desc",
+                pageNumber: state.Page + 1,
+                pageSize: state.PageSize
             );
 
             if (response == null)
             {
-                Snackbar.Add("No se recibió respuesta del servicio", Severity.Warning);
                 return new GridData<MovimientoResponseDto>
                 {
                     Items = new List<MovimientoResponseDto>(),
@@ -199,7 +266,4 @@
         await ApplyFilters();
         Snackbar.Add("Filtros reseteados", Severity.Info);
     }
-
-
-    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 }

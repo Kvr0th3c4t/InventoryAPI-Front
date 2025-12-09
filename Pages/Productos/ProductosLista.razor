@@ -5,101 +5,156 @@
 @inject ICategoriaService CategoriaService
 @inject IProveedorService ProveedorService
 @inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
 
+<PageTitle>Listado - Productos</PageTitle>
 
-<MudPaper Class="p-1 mb-4">
-    <MudGrid Spacing="1">
-        <MudItem xs="12" sm="6" md="3">
-            <MudTextField @bind-Value="searchFilter" Label="Buscar" Placeholder="Nombre de producto..."
-                Variant="Variant.Outlined" Adornment="@Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
-                Clearable="true" OnKeyDown="@(async (e) => { if (e.Key == "Enter") await ApplyFilters(); })" />
-        </MudItem>
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-4">
 
-        <MudItem xs="12" sm="6" md="2">
-            <MudTextField T="decimal?" @bind-Value="precioMinFilter" Label="Precio mínimo (€)"
-                Variant="Variant.Outlined" InputType="InputType.Number" Step="0.01" />
-
-        </MudItem>
-
-        <MudItem xs="12" sm="6" md="2">
-            <MudTextField T="decimal?" @bind-Value="precioMaxFilter" Label="Precio máximo (€)"
-                Variant="Variant.Outlined" InputType="InputType.Number" Step="0.01" />
-        </MudItem>
-        <MudItem xs="12" sm="4" md="2" Class="d-flex justify-content-center m-auto">
-            <MudCheckBox @bind-Value="stockBajoFilter" Label="Stock bajo" Color="Color.Warning" />
-        </MudItem>
-
-        <MudItem xs="12" sm="12" md="3" Class="d-flex align-content-center justify-content-around h-25 m-auto">
-            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="ClearFilters"
-                StartIcon="@Icons.Material.Filled.Clear" Class="mr-2">
-                Limpiar
+    <MudPaper Elevation="2" Class="pa-4 mb-4">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-3">
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.FilterList" Class="mr-2" Size="Size.Small" />
+                Filtros
+            </MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
+                Href="/productos-crear">
+                Nuevo Producto
             </MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ApplyFilters"
-                StartIcon="@Icons.Material.Filled.Filter">
-                Aplicar Filtros
-            </MudButton>
-        </MudItem>
-    </MudGrid>
-</MudPaper>
+        </MudStack>
 
-<MudDataGrid T="ProductoResponseDto" @ref="dataGrid" ServerData="@LoadServerData" RowsPerPage="10" Hover="true"
-    Striped="true" SortMode="SortMode.Multiple">
+        <MudGrid Spacing="3">
+            <MudItem xs="12" sm="6" md="3">
+                <MudTextField @bind-Value="searchFilter" Label="Buscar" Placeholder="Nombre de producto..."
+                    Variant="Variant.Outlined" Adornment="@Adornment.Start"
+                    AdornmentIcon="@Icons.Material.Filled.Search" Clearable="true"
+                    OnKeyDown="@(async (e) => { if (e.Key == "Enter") await ApplyFilters(); })" />
+            </MudItem>
 
-    <Columns>
-        <PropertyColumn Property="x => x.Id" Title="ID" Sortable="false" />
+            <MudItem xs="12" sm="6" md="2">
+                <MudTextField T="decimal?" @bind-Value="precioMinFilter" Label="Precio mínimo"
+                    Variant="Variant.Outlined" InputType="InputType.Number" Step="0.01" Adornment="Adornment.Start"
+                    AdornmentText="€" />
+            </MudItem>
 
-        <PropertyColumn Property="x => x.Nombre" Title="Nombre" Sortable="true" />
+            <MudItem xs="12" sm="6" md="2">
+                <MudTextField T="decimal?" @bind-Value="precioMaxFilter" Label="Precio máximo"
+                    Variant="Variant.Outlined" InputType="InputType.Number" Step="0.01" Adornment="Adornment.Start"
+                    AdornmentText="€" />
+            </MudItem>
 
-        <PropertyColumn Property="x => x.SKU" Title="SKU" Sortable="false" />
+            <MudItem xs="12" sm="6" md="2" Class="d-flex align-center">
+                <MudCheckBox @bind-Value="stockBajoFilter" Label="Stock bajo" Color="Color.Warning" />
+            </MudItem>
 
-        <PropertyColumn Property="x => x.CategoriaNombre" Title="Categoría" Sortable="true" />
+            <MudItem xs="12" md="3" Class="d-flex align-center justify-end">
+                <MudButtonGroup Variant="Variant.Outlined" Size="Size.Medium">
+                    <MudButton Color="Color.Default" OnClick="ClearFilters" StartIcon="@Icons.Material.Filled.Clear">
+                        Limpiar
+                    </MudButton>
+                    <MudButton Color="Color.Primary" OnClick="ApplyFilters" StartIcon="@Icons.Material.Filled.Check">
+                        Aplicar
+                    </MudButton>
+                </MudButtonGroup>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
 
-        <PropertyColumn Property="x => x.StockActual" Title="Stock" Sortable="true">
-        </PropertyColumn>
+    <MudPaper Elevation="2">
+        <MudDataGrid T="ProductoResponseDto" @ref="dataGrid" ServerData="@LoadServerData" RowsPerPage="10" Hover="true"
+            Striped="true" SortMode="SortMode.Multiple" Elevation="0">
 
-        <PropertyColumn Property="x => x.Precio" Title="Precio" Sortable="true">
-            <CellTemplate>
-                <MudText Typo="Typo.body2" Style="font-weight: 500;">
-                    @context.Item.Precio.ToString("C2")
-                </MudText>
-            </CellTemplate>
-        </PropertyColumn>
+            <Columns>
+                <PropertyColumn Property="x => x.Id" Title="ID" Sortable="false">
+                    <CellTemplate>
+                        <MudChip Size="Size.Small" Variant="Variant.Text">@context.Item.Id</MudChip>
+                    </CellTemplate>
+                </PropertyColumn>
 
-        <PropertyColumn Property="x => x.ProveedorNombre" Title="Proveedor" Sortable="true" />
+                <PropertyColumn Property="x => x.Nombre" Title="Nombre" Sortable="true" />
 
-        <TemplateColumn Title="Acciones" Sortable="false">
-            <CellTemplate>
-                <MudTooltip Text="Editar producto">
-                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Warning" Size="Size.Small"
-                        @onclick="@(() => EditProduct(context.Item.Id))" />
-                </MudTooltip>
+                <PropertyColumn Property="x => x.SKU" Title="SKU" Sortable="false">
+                    <CellTemplate>
+                        <MudChip Size="Size.Small" Color="Color.Default">@context.Item.SKU</MudChip>
+                    </CellTemplate>
+                </PropertyColumn>
 
-                <MudTooltip Text="Ver detalles">
-                    <MudIconButton Icon="@Icons.Material.Filled.Visibility" Color="Color.Info" Size="Size.Small"
-                        Class="ml-1" @onclick="@(() => ViewProduct(context.Item.Id))" />
-                </MudTooltip>
-                <MudTooltip Text="Eliminar producto">
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
-                        Class="ml-1" @onclick="@(() => DeleteProducto(context.Item.Id))" />
-                </MudTooltip>
-            </CellTemplate>
-        </TemplateColumn>
-    </Columns>
+                <PropertyColumn Property="x => x.CategoriaNombre" Title="Categoría" Sortable="true">
+                    <CellTemplate>
+                        <MudChip Size="Size.Small" Color="Color.Primary">@context.Item.CategoriaNombre</MudChip>
+                    </CellTemplate>
+                </PropertyColumn>
 
-    <PagerContent>
-        <MudDataGridPager T="ProductoResponseDto" />
-    </PagerContent>
+                <PropertyColumn Property="x => x.StockActual" Title="Stock" Sortable="true">
+                    <CellTemplate>
+                        <MudChip Size="Size.Small"
+                            Color="@(context.Item.StockActual == 0 ? Color.Error : context.Item.StockActual < 10 ? Color.Warning : Color.Success)">
+                            @context.Item.StockActual uds
+                        </MudChip>
+                    </CellTemplate>
+                </PropertyColumn>
 
-    <LoadingContent>
-        <MudProgressCircular Indeterminate="true" Color="Color.Primary" Class="ma-4" />
-    </LoadingContent>
+                <PropertyColumn Property="x => x.Precio" Title="Precio" Sortable="true">
+                    <CellTemplate>
+                        <MudText Typo="Typo.body1" Style="font-weight: 500;">
+                            @context.Item.Precio.ToString("C2")
+                        </MudText>
+                    </CellTemplate>
+                </PropertyColumn>
 
-    <NoRecordsContent>
-        <MudText Align="Align.Center" Class="pa-8">
-            No se encontraron productos con los filtros actuales
-        </MudText>
-    </NoRecordsContent>
-</MudDataGrid>
+                <PropertyColumn Property="x => x.ProveedorNombre" Title="Proveedor" Sortable="true">
+                    <CellTemplate>
+                        @if (!string.IsNullOrEmpty(context.Item.ProveedorNombre))
+                        {
+                            <MudChip Size="Size.Small" Color="Color.Tertiary">@context.Item.ProveedorNombre</MudChip>
+                        }
+                        else
+                        {
+                            <MudText Typo="Typo.body2" Color="Color.Secondary">Sin proveedor</MudText>
+                        }
+                    </CellTemplate>
+                </PropertyColumn>
+
+                <TemplateColumn Title="Acciones" Sortable="false">
+                    <CellTemplate>
+                        <MudStack Row="true" Spacing="1">
+                            <MudTooltip Text="Ver detalles">
+                                <MudIconButton Icon="@Icons.Material.Filled.Visibility" Color="Color.Info"
+                                    Size="Size.Small" OnClick="@(() => ViewProduct(context.Item.Id))" />
+                            </MudTooltip>
+                            <MudTooltip Text="Editar">
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Warning"
+                                    Size="Size.Small" OnClick="@(() => EditProduct(context.Item.Id))" />
+                            </MudTooltip>
+                            <MudTooltip Text="Eliminar">
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"
+                                    Size="Size.Small" OnClick="@(() => DeleteProducto(context.Item.Id))" />
+                            </MudTooltip>
+                        </MudStack>
+                    </CellTemplate>
+                </TemplateColumn>
+
+            </Columns>
+
+            <PagerContent>
+                <MudDataGridPager T="ProductoResponseDto" />
+            </PagerContent>
+
+            <LoadingContent>
+                <MudProgressCircular Indeterminate="true" Color="Color.Primary" Class="ma-4" />
+            </LoadingContent>
+
+            <NoRecordsContent>
+                <MudStack AlignItems="AlignItems.Center" Class="pa-8">
+                    <MudIcon Icon="@Icons.Material.Filled.SearchOff" Size="Size.Large" Color="Color.Secondary" />
+                    <MudText Typo="Typo.body1" Color="Color.Secondary">
+                        No se encontraron productos con los filtros actuales
+                    </MudText>
+                </MudStack>
+            </NoRecordsContent>
+        </MudDataGrid>
+    </MudPaper>
+</MudContainer>
 
 @code {
     private MudDataGrid<ProductoResponseDto>? dataGrid;
@@ -115,7 +170,6 @@
     {
         try
         {
-            // Mapear el ordenamiento de MudDataGrid a los parámetros de la API
             string? orderBy = null;
             string? order = null;
 
@@ -137,7 +191,6 @@
                 order = sortDefinition.Descending ? "desc" : "asc";
             }
 
-            // Llamar al servicio con todos los filtros
             var response = await ProductoService.GetAllProductosAsync(
             pageNumber: state.Page + 1,
             pageSize: state.PageSize,
@@ -151,7 +204,6 @@
             order: order
             );
 
-            // Asegurarse de que la respuesta no sea nula
             if (response == null)
             {
                 return new GridData<ProductoResponseDto>
@@ -161,7 +213,6 @@
                 };
             }
 
-            // Retornar los datos en el formato que espera MudDataGrid
             return new GridData<ProductoResponseDto>
             {
                 Items = response.Items ?? new List<ProductoResponseDto>(),
@@ -198,34 +249,25 @@
         stockBajoFilter = null;
 
         await ApplyFilters();
-
         Snackbar.Add("Filtros reseteados", Severity.Info);
     }
 
+    private void EditProduct(int id) => NavigationManager.NavigateTo($"/productos-editar/{id}");
 
-    private void EditProduct(int id)
-    {
-        NavigationManager.NavigateTo($"/productos-editar/{id}");
-    }
+    private void ViewProduct(int id) => NavigationManager.NavigateTo($"/productos-detalle/{id}");
 
-    private void ViewProduct(int id)
-    {
-        NavigationManager.NavigateTo($"/productos-detalle/{id}");
-    }
+
     private async Task DeleteProducto(int id)
     {
         try
         {
             await ProductoService.DeleteProductoAsync(id);
-            await dataGrid.ReloadServerData();
-
-            Snackbar.Add("Producto eliminado correctamente", Severity.Success);
+            await dataGrid!.ReloadServerData();
+            Snackbar.Add("✅ Producto eliminado correctamente", Severity.Success);
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            Snackbar.Add($"❌ Error: {ex.Message}", Severity.Error);
         }
     }
-
-    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 }

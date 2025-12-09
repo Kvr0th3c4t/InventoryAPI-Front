@@ -2,129 +2,207 @@
 
 @inject IProductoStatsService ProductoStatsService
 
-<PageTitle>Dashboard de productos</PageTitle>
+<PageTitle>Dashboard - Productos</PageTitle>
 
-<TitleCard Title="Kpi's inventario"></TitleCard>
-<MudGrid Spacing="2">
-    <MudItem xs="3">
-        <KpiCard Title="Total Productos" Value=@totalProductos.ToString("N0") Icon="@Icons.Material.Filled.Inventory"
-            IconColor="Color.Primary" ValueColor="Color.Primary" />
-    </MudItem>
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-4">
 
-    <MudItem xs="3">
-        <KpiCard Title="Stock Bajo" Value=@(stockBajo == 0 ? "Sin alertas" : stockBajo.ToString())
-            Icon="@Icons.Material.Filled.Warning" IconColor="Color.Warning" ValueColor="Color.Warning" />
-    </MudItem>
-    <MudItem xs="3">
-        <KpiCard Title="Sin Stock" Value=@(sinStock == 0 ? "Sin alertas" : sinStock.ToString())
-            Icon="@Icons.Material.Filled.Dangerous" IconColor="Color.Error" ValueColor="Color.Error" />
-    </MudItem>
-    <MudItem xs="3">
-        <KpiCard Title="Últimos 30 dias" Value=@(totalMovimientosUltimos30 == 0 ? "Sin movimientos" :
-                                                     $"{totalMovimientosUltimos30.ToString()} movimientos") Icon="@Icons.Material.Filled.Info"
-            IconColor="Color.Tertiary" ValueColor="Color.Tertiary" />
-    </MudItem>
-</MudGrid>
+    @if (loading)
+    {
+        <MudProgressCircular Indeterminate="true" />
+    }
+    else if (error != null)
+    {
+        <MudAlert Severity="Severity.Error">@error</MudAlert>
+    }
+    else
+    {
 
-<TitleCard Title="Kpi's valor de producto"></TitleCard>
-<MudGrid Spacing="2">
-    <MudItem xs="3">
-        <KpiCard Title="Valor Total Inventario" Value=@($"{valorTotal:N2} €") Icon="@Icons.Material.Filled.AttachMoney"
-            IconColor="Color.Success" ValueColor="Color.Success" />
-    </MudItem>
-    <MudItem xs="3">
-        <KpiCard Title="Precio promedio" Value=@($"{precioPromedio:N2} €") Icon="@Icons.Material.Filled.AttachMoney"
-            IconColor="Color.Success" ValueColor="Color.Success" />
-    </MudItem>
-    <MudItem xs="3">
-        <KpiCard Title="Precio más alto" Value=@($"{precioMasAlto:N2} €") Icon="@Icons.Material.Filled.AttachMoney"
-            IconColor="Color.Success" ValueColor="Color.Success" />
-    </MudItem>
-    <MudItem xs="3">
-        <KpiCard Title="Precio más bajo" Value=@($"{precioMasBajo:N2} €") Icon="@Icons.Material.Filled.AttachMoney"
-            IconColor="Color.Success" ValueColor="Color.Success" />
-    </MudItem>
-</MudGrid>
-
-<TitleCard Title="Graficas agrupadas"></TitleCard>
-<MudGrid Spacing="2">
-    <MudItem xs="6">
-        <MudPaper Class="pa-4" Height="500px">
-            <MudText Typo="Typo.h6" class="mb-2"> Productos por proveedor</MudText>
-
-            <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" InputData="@dataProveedor"
-                InputLabels="@labelsProveedor">
-            </MudChart>
+        <MudPaper Elevation="0" Class="pa-4 mb-4" Style="border-left: 4px solid var(--mud-palette-primary);">
+            <MudText Typo="Typo.h6" Color="Color.Primary">Kpi's inventario</MudText>
         </MudPaper>
-    </MudItem>
-    <MudItem xs="6">
-        <MudPaper Class="pa-4" Height="500px">
-            <MudText Typo="Typo.h6" class="mb-2"> Productos por categoria</MudText>
 
-            <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" InputData="@dataCategoria"
-                InputLabels="@labelsCategoria">
-            </MudChart>
+        <MudGrid Spacing="3" Class="mb-6">
+            <MudItem xs="12" sm="6" md="3">
+                <KpiCard Title="Total Productos" Value=@totalProductos.ToString("N0")
+                    Icon="@Icons.Material.Filled.Inventory" IconColor="Color.Primary" ValueColor="Color.Primary" />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <KpiCard Title="Stock Bajo" Value=@(stockBajo == 0 ? "Sin alertas" : stockBajo.ToString())
+                    Icon="@Icons.Material.Filled.Warning" IconColor="Color.Warning" ValueColor="Color.Warning" />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <KpiCard Title="Sin Stock" Value=@(sinStock == 0 ? "Sin alertas" : sinStock.ToString())
+                    Icon="@Icons.Material.Filled.Dangerous" IconColor="Color.Error" ValueColor="Color.Error" />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <KpiCard Title="Últimos 30 días" Value=@(totalMovimientosUltimos30 == 0 ? "Sin movimientos" :
+                                                                 $"{totalMovimientosUltimos30} movimientos") Icon="@Icons.Material.Filled.SwapHoriz"
+                IconColor="Color.Tertiary" ValueColor="Color.Tertiary" />
+        </MudItem>
+    </MudGrid>
+
+
+        <MudPaper Elevation="0" Class="pa-4 mb-4" Style="border-left: 4px solid var(--mud-palette-primary);">
+            <MudText Typo="Typo.h6" Color="Color.Primary">Kpi's valor de producto</MudText>
         </MudPaper>
-    </MudItem>
-</MudGrid>
 
-<TitleCard Title="Histórico de Tops de producto"></TitleCard>
-<MudGrid Spacing="2" Class="mb-4">
-    <MudItem xs="4">
-        <MudTable Items="@top5MasValiosos?.OrderByDescending(item => item.Precio)" Hover="true"
-            Breakpoint="Breakpoint.Sm" Loading="@loading" LoadingProgressColor="Color.Info">
-            <ToolBarContent>
-                <MudText Typo="Typo.h6">Top 5 más valiosos</MudText>
-            </ToolBarContent>
-            <HeaderContent>
-                <MudTh>Id</MudTh>
-                <MudTh>Sku</MudTh>
-                <MudTh>Precio</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Nr">@context.Id</MudTd>
-                <MudTd DataLabel="Sign">@context.SKU</MudTd>
-                <MudTd DataLabel="Name">@context.Precio €</MudTd>
-            </RowTemplate>
-        </MudTable>
-    </MudItem>
-    <MudItem xs="4">
-        <MudTable Items="@top5MasStock?.OrderByDescending(item => item.StockActual)" Hover="true"
-            Breakpoint="Breakpoint.Sm" Loading="@loading" LoadingProgressColor="Color.Info">
-            <ToolBarContent>
-                <MudText Typo="Typo.h6">Top 5 más Stock</MudText>
-            </ToolBarContent>
-            <HeaderContent>
-                <MudTh>Id</MudTh>
-                <MudTh>Sku</MudTh>
-                <MudTh>Stock</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Nr">@context.Id</MudTd>
-                <MudTd DataLabel="Sign">@context.SKU</MudTd>
-                <MudTd DataLabel="Name">@context.StockActual uds</MudTd>
-            </RowTemplate>
-        </MudTable>
-    </MudItem>
-    <MudItem xs="4">
-        <MudTable Items="@top5MenosStock?.OrderBy(item => item.StockActual)" Hover="true" Breakpoint="Breakpoint.Sm"
-            Loading="@loading" LoadingProgressColor="Color.Info">
-            <ToolBarContent>
-                <MudText Typo="Typo.h6">Top 5 menos Stock</MudText>
-            </ToolBarContent>
-            <HeaderContent>
-                <MudTh>Id</MudTh>
-                <MudTh>Sku</MudTh>
-                <MudTh>Stock</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Nr">@context.Id</MudTd>
-                <MudTd DataLabel="Sign">@context.SKU</MudTd>
-                <MudTd DataLabel="Name">@context.StockActual uds</MudTd>
-            </RowTemplate>
-        </MudTable>
-    </MudItem>
-</MudGrid>
+
+        <MudGrid Spacing="3" Class="mb-6">
+            <MudItem xs="12" sm="6" md="3">
+                <KpiCard Title="Valor Total Inventario" Value=@($"{valorTotal:N2} €")
+                    Icon="@Icons.Material.Filled.AccountBalance" IconColor="Color.Secondary" ValueColor="Color.Secondary" />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <KpiCard Title="Precio Promedio" Value=@($"{precioPromedio:N2} €")
+                    Icon="@Icons.Material.Filled.TrendingFlat" IconColor="Color.Secondary" ValueColor="Color.Secondary" />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <KpiCard Title="Precio Más Alto" Value=@($"{precioMasAlto:N2} €") Icon="@Icons.Material.Filled.TrendingUp"
+                    IconColor="Color.Success" ValueColor="Color.Success" />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <KpiCard Title="Precio Más Bajo" Value=@($"{precioMasBajo:N2} €") Icon="@Icons.Material.Filled.TrendingDown"
+                    IconColor="Color.Error" ValueColor="Color.Error" />
+            </MudItem>
+        </MudGrid>
+
+        <MudPaper Elevation="0" Class="pa-4 mb-4" Style="border-left: 4px solid var(--mud-palette-info);">
+            <MudText Typo="Typo.h6" Color="Color.Info">Gráficas agrupadas</MudText>
+        </MudPaper>
+
+        <MudGrid Spacing="3" Class="mb-6">
+            <MudItem xs="12" md="6">
+                <MudPaper Elevation="2" Class="pa-6" Style="height: 100%;">
+                    <MudText Typo="Typo.h6" Class="mb-4">
+                        <MudIcon Icon="@Icons.Material.Filled.Business" Class="mr-2" />
+                        Productos por proveedor
+                    </MudText>
+                    <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" InputData="@dataProveedor"
+                        InputLabels="@labelsProveedor" />
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudPaper Elevation="2" Class="pa-6" Style="height: 100%;">
+                    <MudText Typo="Typo.h6" Class="mb-4">
+                        <MudIcon Icon="@Icons.Material.Filled.Category" Class="mr-2" />
+                        Productos por categoría
+                    </MudText>
+                    <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" InputData="@dataCategoria"
+                        InputLabels="@labelsCategoria" />
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+
+        <MudPaper Elevation="0" Class="pa-4 mb-4" Style="border-left: 4px solid var(--mud-palette-secondary);">
+            <MudText Typo="Typo.h6" Color="Color.Secondary">Histórico de Tops de producto</MudText>
+        </MudPaper>
+
+        <MudGrid Spacing="3" Class="mb-6">
+            <MudItem xs="12" md="4">
+                <MudPaper Elevation="2">
+                    <MudTable Items="@top5MasValiosos?.OrderByDescending(item => item.Precio)" Hover="true"
+                        Breakpoint="Breakpoint.Sm" Loading="@loading" LoadingProgressColor="Color.Info" Elevation="0">
+                        <ToolBarContent>
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                <MudIcon Icon="@Icons.Material.Filled.Euro" Color="Color.Success" Size="Size.Small" />
+                                <MudText Typo="Typo.h6">Top 5 Más Valiosos</MudText>
+                            </MudStack>
+                        </ToolBarContent>
+                        <HeaderContent>
+                            <MudTh>ID</MudTh>
+                            <MudTh>SKU</MudTh>
+                            <MudTh>
+                                <MudTableSortLabel T="string">Precio</MudTableSortLabel>
+                            </MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="ID">
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">@context.Id</MudChip>
+                            </MudTd>
+                            <MudTd DataLabel="SKU">
+                                <MudText Typo="Typo.body2">@context.SKU</MudText>
+                            </MudTd>
+                            <MudTd DataLabel="Precio">
+                                <MudText Typo="Typo.body1" Color="Color.Success">
+                                    <strong>@context.Precio.ToString("N2") €</strong>
+                                </MudText>
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </MudPaper>
+            </MudItem>
+
+            <MudItem xs="12" md="4">
+                <MudPaper Elevation="2">
+                    <MudTable Items="@top5MasStock?.OrderByDescending(item => item.StockActual)" Hover="true"
+                        Breakpoint="Breakpoint.Sm" Loading="@loading" LoadingProgressColor="Color.Info" Elevation="0">
+                        <ToolBarContent>
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                <MudIcon Icon="@Icons.Material.Filled.Inventory2" Color="Color.Primary" Size="Size.Small" />
+                                <MudText Typo="Typo.h6">Top 5 Más Stock</MudText>
+                            </MudStack>
+                        </ToolBarContent>
+                        <HeaderContent>
+                            <MudTh>ID</MudTh>
+                            <MudTh>SKU</MudTh>
+                            <MudTh>
+                                <MudTableSortLabel T="string">Stock</MudTableSortLabel>
+                            </MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="ID">
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">@context.Id</MudChip>
+                            </MudTd>
+                            <MudTd DataLabel="SKU">
+                                <MudText Typo="Typo.body2">@context.SKU</MudText>
+                            </MudTd>
+                            <MudTd DataLabel="Stock">
+                                <MudText Typo="Typo.body1" Color="Color.Primary">
+                                    <strong>@context.StockActual uds</strong>
+                                </MudText>
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </MudPaper>
+            </MudItem>
+
+            <MudItem xs="12" md="4">
+                <MudPaper Elevation="2">
+                    <MudTable Items="@top5MenosStock?.OrderBy(item => item.StockActual)" Hover="true"
+                        Breakpoint="Breakpoint.Sm" Loading="@loading" LoadingProgressColor="Color.Info" Elevation="0">
+                        <ToolBarContent>
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                <MudIcon Icon="@Icons.Material.Filled.TrendingDown" Color="Color.Warning"
+                                    Size="Size.Small" />
+                                <MudText Typo="Typo.h6">Top 5 Menos Stock</MudText>
+                            </MudStack>
+                        </ToolBarContent>
+                        <HeaderContent>
+                            <MudTh>ID</MudTh>
+                            <MudTh>SKU</MudTh>
+                            <MudTh>
+                                <MudTableSortLabel T="string">Stock</MudTableSortLabel>
+                            </MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="ID">
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text">@context.Id</MudChip>
+                            </MudTd>
+                            <MudTd DataLabel="SKU">
+                                <MudText Typo="Typo.body2">@context.SKU</MudText>
+                            </MudTd>
+                            <MudTd DataLabel="Stock">
+                                <MudText Typo="Typo.body1" Color="Color.Warning">
+                                    <strong>@context.StockActual uds</strong>
+                                </MudText>
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+        }
+</MudContainer>
 
 @code
 {

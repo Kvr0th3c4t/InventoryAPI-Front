@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "InventoryAPI-UI",
   "resources": {
-    "hash": "sha256-NBEioPQoVwp9Sha5e/55BmFG7F8ZpylmVE3zSy+U1Aw=",
+    "hash": "sha256-vpINpEncYsUQCieKrlkU5cREhCJH/3ul+sUBAQTrfGI=",
     "fingerprinting": {
       "Microsoft.AspNetCore.Authorization.is84zt9n9u.wasm": "Microsoft.AspNetCore.Authorization.wasm",
       "Microsoft.AspNetCore.Components.3zig3jhz80.wasm": "Microsoft.AspNetCore.Components.wasm",
@@ -210,8 +210,8 @@
       "icudt_CJK.tjcz0u77k5.dat": "icudt_CJK.dat",
       "icudt_EFIGS.tptq2av103.dat": "icudt_EFIGS.dat",
       "icudt_no_CJK.lfu7j35m59.dat": "icudt_no_CJK.dat",
-      "InventoryAPI-UI.5qprp13mpe.wasm": "InventoryAPI-UI.wasm",
-      "InventoryAPI-UI.yngtblnhkr.pdb": "InventoryAPI-UI.pdb"
+      "InventoryAPI-UI.n2h7k5r7q7.wasm": "InventoryAPI-UI.wasm",
+      "InventoryAPI-UI.5evuoll698.pdb": "InventoryAPI-UI.pdb"
     },
     "jsModuleNative": {
       "dotnet.native.noby4tlk4d.js": "sha256-p9eEzXhQIsI0a5bBJhfzW15iRafgplTxT8XrO5FiH9o="
@@ -430,10 +430,10 @@
       "WindowsBase.i7qip04bb5.wasm": "sha256-Lg5W8BM50Cpl1dgTrG9RQOrBRKOJq6H1t5sH3yf4KDU=",
       "mscorlib.ijjuvl21w4.wasm": "sha256-ku4DyQX7IfTdwPwDlrz9odvCs4mrgsJl0fNaqY56KOI=",
       "netstandard.jgp13znru0.wasm": "sha256-I7arRnyxWh5PItslQKjzLIG7EpohJACm7p/7K8eD0YA=",
-      "InventoryAPI-UI.5qprp13mpe.wasm": "sha256-/ccGydKpAPV4IBUNAl0kB9oxt2+x0RiEWdVjmEz1Jc8="
+      "InventoryAPI-UI.n2h7k5r7q7.wasm": "sha256-0XUkSWNZIjyJXcGjGD16N6u6S6DY4Z9h6yiRuK0kBbM="
     },
     "pdb": {
-      "InventoryAPI-UI.yngtblnhkr.pdb": "sha256-ngir92xlX8VK5+JLTafYPYH0tq9GSBTq5bOv8tOIs6o="
+      "InventoryAPI-UI.5evuoll698.pdb": "sha256-k6kIyuHaLsHYxeDPY3RVR8XxUe+W5GnJbnSZcAcXe2g="
     }
   },
   "cacheBootResources": true,
