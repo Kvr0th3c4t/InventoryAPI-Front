@@ -1,0 +1,79 @@
+@page "/categorias-editar/{Id:int}"
+
+@inject ICategoriaService CategoriaService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+
+<MudPaper Elevation="2" Class="pa-6">
+    <MudText Typo="Typo.h5" Class="mb-4">Actualizar Categoria</MudText>
+
+    <MudForm @ref="_form" Model="@updateCategoria">
+        <MudGrid Spacing="3">
+
+            <MudItem xs="12" sm="6">
+                <MudTextField @bind-Value="updateCategoria.Nombre" Label="Nombre del producto" Variant="Variant.Outlined"
+                    Required="true" RequiredError="El nombre es obligatorio" />
+            </MudItem>
+
+            <MudItem xs="12" sm="6">
+                <MudTextField @bind-Value="updateCategoria.Descripcion" Label="SKU" Variant="Variant.Outlined" Required="true"
+                    RequiredError="La descripción es obligatoria" />
+            </MudItem>
+        </MudGrid>
+
+        <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd" Class="mt-6">
+            <MudButton Variant="Variant.Outlined" Color="Color.Default" Href="/categorias-lista">
+                Volver
+            </MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@ActualizarProductoAsync"
+                StartIcon="@Icons.Material.Filled.Save">
+                Guardar cambios
+            </MudButton>
+        </MudStack>
+    </MudForm>
+</MudPaper>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private MudForm? _form;
+    private CategoriaResponseDto categoriaResponse = new();
+    private UpdateCategoriaDto updateCategoria = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            categoriaResponse = await CategoriaService.GetCategoriaByIdAsync(Id);
+
+            updateCategoria = new UpdateCategoriaDto
+            {
+                Nombre = categoriaResponse.Nombre,
+                Descripcion = categoriaResponse.Descripcion
+            };
+
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error al cargar: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task ActualizarProductoAsync()
+    {
+        try
+        {
+            // Pasar valor de la variable auxiliar al DTO
+
+            await CategoriaService.UpdateCategoriaAsync(Id, updateCategoria);
+            Snackbar.Add("✅ Producto actualizado correctamente", Severity.Success);
+            NavigationManager.NavigateTo("/productos-lista");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"❌ Error: {ex.Message}", Severity.Error);
+        }
+    }
+}

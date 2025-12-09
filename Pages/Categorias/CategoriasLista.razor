@@ -6,13 +6,8 @@
 @inject ICategoriaService CategoriaService
 @inject ISnackbar Snackbar
 
-<MudDataGrid T="CategoriaResponseDto"
-             @ref="dataGrid"
-             ServerData="@LoadServerData"
-             RowsPerPage="10"
-             Hover="true"
-             Striped="true"
-             SortMode="SortMode.Multiple">
+<MudDataGrid T="CategoriaResponseDto" @ref="dataGrid" ServerData="@LoadServerData" RowsPerPage="10" Hover="true"
+    Striped="true" SortMode="SortMode.Multiple">
 
     <Columns>
         <PropertyColumn Property="x => x.Id" Title="ID" Sortable="false" />
@@ -23,19 +18,14 @@
 
         <TemplateColumn Title="Acciones" Sortable="false">
             <CellTemplate>
-                <MudTooltip Text="Editar producto">
-                    <MudIconButton Icon="@Icons.Material.Filled.Edit"
-                                   Color="Color.Primary"
-                                   Size="Size.Small"
-                                   @onclick="@(() => EditCategoria(context.Item.Id))" />
+                <MudTooltip Text="Editar categoria">
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Warning" Size="Size.Small"
+                        @onclick="@(() => EditCategoria(context.Item.Id))" />
                 </MudTooltip>
 
-                <MudTooltip Text="Eliminar producto">
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                   Color="Color.Info"
-                                   Size="Size.Small"
-                                   Class="ml-1"
-                                   @onclick="@(() => DeleteCategoria(context.Item.Id))" />
+                <MudTooltip Text="Eliminar categoria">
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
+                        Class="ml-1" @onclick="@(() => DeleteCategoria(context.Item.Id))" />
                 </MudTooltip>
             </CellTemplate>
         </TemplateColumn>
@@ -65,8 +55,8 @@
         {
             // Llamar al servicio con todos los filtros
             var response = await CategoriaService.GetAllCategoriasAsync(
-                pageNumber: state.Page + 1,
-                pageSize: state.PageSize
+            pageNumber: state.Page + 1,
+            pageSize: state.PageSize
             );
 
             // Asegurarse de que la respuesta no sea nula
@@ -99,7 +89,7 @@
 
     private void EditCategoria(int id)
     {
-        NavigationManager.NavigateTo($"/productos/editar/{id}");
+        NavigationManager.NavigateTo($"/categorias-editar/{id}");
     }
 
     private async void DeleteCategoria(int id)
@@ -110,4 +100,3 @@
 
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 }
-
