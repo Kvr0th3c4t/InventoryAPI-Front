@@ -6,13 +6,8 @@
 @inject IProveedorService ProveedorService
 @inject ISnackbar Snackbar
 
-<MudDataGrid T="ProveedorResponseDto"
-             @ref="dataGrid"
-             ServerData="@LoadServerData"
-             RowsPerPage="10"
-             Hover="true"
-             Striped="true"
-             SortMode="SortMode.Multiple">
+<MudDataGrid T="ProveedorResponseDto" @ref="dataGrid" ServerData="@LoadServerData" RowsPerPage="10" Hover="true"
+    Striped="true" SortMode="SortMode.Multiple">
 
     <Columns>
         <PropertyColumn Property="x => x.Id" Title="ID" Sortable="false" />
@@ -26,18 +21,13 @@
         <TemplateColumn Title="Acciones" Sortable="false">
             <CellTemplate>
                 <MudTooltip Text="Editar proveedor">
-                    <MudIconButton Icon="@Icons.Material.Filled.Edit"
-                                   Color="Color.Primary"
-                                   Size="Size.Small"
-                                   @onclick="@(() => EditProveedor(context.Item.Id))" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Warning" Size="Size.Small"
+                        @onclick="@(() => EditProveedor(context.Item.Id))" />
                 </MudTooltip>
 
                 <MudTooltip Text="Eliminar proveedor">
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                   Color="Color.Info"
-                                   Size="Size.Small"
-                                   Class="ml-1"
-                                   @onclick="@(() => DeleteProveedor(context.Item.Id))" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
+                        Class="ml-1" @onclick="@(() => DeleteProveedor(context.Item.Id))" />
                 </MudTooltip>
             </CellTemplate>
         </TemplateColumn>
@@ -67,8 +57,8 @@
         {
             // Llamar al servicio con todos los filtros
             var response = await ProveedorService.GetAllProveedoresAsync(
-                pageNumber: state.Page + 1,
-                pageSize: state.PageSize
+            pageNumber: state.Page + 1,
+            pageSize: state.PageSize
             );
 
             // Asegurarse de que la respuesta no sea nula
@@ -101,7 +91,7 @@
 
     private void EditProveedor(int id)
     {
-        NavigationManager.NavigateTo($"/productos/editar/{id}");
+        NavigationManager.NavigateTo($"/proveedores-editar/{id}");
     }
 
     private async void DeleteProveedor(int id)
@@ -112,4 +102,3 @@
 
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 }
-

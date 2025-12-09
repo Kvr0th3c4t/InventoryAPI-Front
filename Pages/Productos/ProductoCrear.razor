@@ -1,0 +1,122 @@
+@page "/productos-crear"
+@inject IProductoService ProductoService
+@inject ICategoriaService CategoriaService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+
+<MudPaper Elevation="2" Class="pa-6">
+    <MudText Typo="Typo.h5" Class="mb-4">Crear Producto</MudText>
+
+    @if (loading)
+    {
+        <MudProgressCircular Indeterminate="true" />
+    }
+    else
+    {
+        <MudForm @ref="_form" Model="@createProductoDto">
+            <MudGrid Spacing="3">
+
+                <MudItem xs="12">
+                    <MudTextField @bind-Value="createProductoDto.Nombre" Label="Nombre del producto"
+                        Variant="Variant.Outlined" Required="true" RequiredError="El nombre es obligatorio" />
+                </MudItem>
+
+                <MudItem xs="12">
+                    <MudTextField @bind-Value="createProductoDto.Descripcion" Label="Descripción" Variant="Variant.Outlined"
+                        Lines="3" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudSelect @bind-Value="categoriaSeleccionada" Label="Categoría" Variant="Variant.Outlined"
+                        Required="true" T="int">
+                        @foreach (var cat in categorias?.Items ?? new())
+                        {
+                            <MudSelectItem T="int" Value="@cat.Id">
+                                @cat.Nombre
+                            </MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudNumericField @bind-Value="createProductoDto.ProveedorId" Label="Proveedor ID (opcional)"
+                        Variant="Variant.Outlined" Min="1" />
+                </MudItem>
+
+                <MudItem xs="12" sm="4">
+                    <MudNumericField @bind-Value="createProductoDto.StockActual" Label="Stock actual"
+                        Variant="Variant.Outlined" Min="0" Adornment="Adornment.End" AdornmentText="uds" />
+                </MudItem>
+
+                <MudItem xs="12" sm="4">
+                    <MudNumericField @bind-Value="createProductoDto.StockMinimo" Label="Stock mínimo"
+                        Variant="Variant.Outlined" Min="0" Adornment="Adornment.End" AdornmentText="uds" />
+                </MudItem>
+
+                <MudItem xs="12" sm="4">
+                    <MudNumericField @bind-Value="createProductoDto.Precio" Label="Precio" Variant="Variant.Outlined"
+                        Min="0" Step="0.01M" Format="N2" Adornment="Adornment.Start" AdornmentText="€" />
+                </MudItem>
+
+            </MudGrid>
+
+            <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd" Class="mt-6">
+                <MudButton Variant="Variant.Outlined" Color="Color.Default" Href="/productos-lista">
+                    Cancelar
+                </MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CreateProductoAsync"
+                    StartIcon="@Icons.Material.Filled.Add">
+                    Crear producto
+                </MudButton>
+            </MudStack>
+        </MudForm>
+    }
+</MudPaper>
+
+@code
+{
+    private MudForm? _form;
+    private CreateProductoDto createProductoDto = new();
+    private int categoriaSeleccionada;
+
+    private bool loading = true;
+
+    private PagedResponse<CategoriaResponseDto> categorias = new()
+    {
+        Items = new List<CategoriaResponseDto>()
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            loading = true;
+            categorias = await CategoriaService.GetAllCategoriasAsync(1, 100);
+            loading = false;
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error al cargar: {ex.Message}", Severity.Error);
+            loading = false;
+        }
+    }
+
+    private async Task CreateProductoAsync()
+    {
+        try
+        {
+
+            createProductoDto.CategoriaId = categoriaSeleccionada;
+
+            await ProductoService.AddProductoAsync(createProductoDto);
+
+            Snackbar.Add("✅ Producto creado correctamente", Severity.Success);
+            NavigationManager.NavigateTo("/productos-lista");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"❌ Error: {ex.Message}", Severity.Error);
+        }
+
+    }
+}

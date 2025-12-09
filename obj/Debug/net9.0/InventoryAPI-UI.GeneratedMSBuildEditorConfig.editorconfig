@@ -64,6 +64,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTW92aW1pZW50b3NcTW92aW1pZW50b3NMaXN0YS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Adria/OneDrive/Escritorio/InventoryAPI-UI/InventoryAPI-UI/Pages/Productos/ProductoCrear.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJvZHVjdG9zXFByb2R1Y3RvQ3JlYXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Adria/OneDrive/Escritorio/InventoryAPI-UI/InventoryAPI-UI/Pages/Productos/ProductoDetalle.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJvZHVjdG9zXFByb2R1Y3RvRGV0YWxsZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
@@ -78,6 +82,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Adria/OneDrive/Escritorio/InventoryAPI-UI/InventoryAPI-UI/Pages/Productos/ProductosLista.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJvZHVjdG9zXFByb2R1Y3Rvc0xpc3RhLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Adria/OneDrive/Escritorio/InventoryAPI-UI/InventoryAPI-UI/Pages/Proveedores/ProveedorEditar.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJvdmVlZG9yZXNcUHJvdmVlZG9yRWRpdGFyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Adria/OneDrive/Escritorio/InventoryAPI-UI/InventoryAPI-UI/Pages/Proveedores/ProveedoresHome.razor]
