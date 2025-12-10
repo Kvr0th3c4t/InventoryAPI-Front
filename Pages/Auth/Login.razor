@@ -1,0 +1,99 @@
+@page "/login"
+@layout EmptyLayout
+
+@inject IAuthService AuthService
+@inject ISessionStorageService SessionStorage
+@inject CustomAuthStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<PageTitle>Iniciar Sesión</PageTitle>
+
+<MudPaper Elevation="8" Class="pa-8" Style="max-width: 450px; width: 100%; background: white; border-radius: 16px;">
+    <MudStack Spacing="4" AlignItems="AlignItems.Center">
+
+        <MudAvatar Size="Size.Large" Color="Color.Primary" Style="width: 80px; height: 80px;">
+            <MudIcon Icon="@Icons.Material.Filled.Inventory" Size="Size.Large" />
+        </MudAvatar>
+
+        <MudText Typo="Typo.h4" Align="Align.Center" Style="font-weight: 600;">
+            Inventory API
+        </MudText>
+
+        <MudText Typo="Typo.body2" Align="Align.Center" Color="Color.Secondary">
+            Inicia sesión para continuar
+        </MudText>
+
+        <MudDivider Style="width: 100%;" />
+
+        <MudTextField @bind-Value="email" Label="Email" Variant="Variant.Outlined" FullWidth="true"
+            Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Email" OnKeyDown="@HandleKeyDown" />
+
+        <MudTextField @bind-Value="password" Label="Contraseña" Variant="Variant.Outlined" FullWidth="true"
+            InputType="InputType.Password" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.VpnKey"
+            OnKeyDown="@HandleKeyDown" />
+
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Size="Size.Large" OnClick="AuthLogin"
+            Disabled="@loading">
+            @if (loading)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                <span>Iniciando sesión...</span>
+            }
+            else
+            {
+                <span>Entrar</span>
+            }
+        </MudButton>
+
+    </MudStack>
+</MudPaper>
+
+@code {
+    private string email = "";
+    private string password = "";
+    private bool loading = false;
+
+    private async Task AuthLogin()
+    {
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+        {
+            Snackbar.Add("Por favor completa todos los campos", Severity.Warning);
+            return;
+        }
+
+        try
+        {
+            loading = true;
+
+            var result = await AuthService.LoginAsync(new LoginDto(email, password));
+
+            await SessionStorage.SetItemAsync("authToken", result.Token);
+            AuthStateProvider.NotifyUserAuthentication(result.Token);
+
+            Snackbar.Add($"✅ Bienvenido {result.Email}", Severity.Success);
+            Navigation.NavigateTo("/");
+        }
+        catch (ApiException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            Snackbar.Add("❌ Email o contraseña incorrectos", Severity.Error);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"❌ Error al iniciar sesión: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && !loading)
+        {
+            await AuthLogin();
+        }
+    }
+}

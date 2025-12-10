@@ -1,0 +1,16 @@
+@page "/logout"
+@layout EmptyLayout
+@inject ISessionStorageService SessionStorage
+@inject CustomAuthStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await SessionStorage.RemoveItemAsync("authToken");
+        AuthStateProvider.NotifyUserLogout();
+        Snackbar.Add("👋 Sesión cerrada", Severity.Info);
+        Navigation.NavigateTo("/login");
+    }
+}

@@ -1,5 +1,5 @@
 @page "/proveedores-editar/{Id:int}"
-
+@attribute [AuthorizeAttribute]
 @inject IProveedorService ProveedorService
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar

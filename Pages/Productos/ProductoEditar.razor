@@ -1,5 +1,5 @@
 @page "/productos-editar/{Id:int}"
-
+@attribute [AuthorizeAttribute]
 @inject IProductoService ProductoService
 @inject ICategoriaService CategoriaService
 @inject IProveedorService ProveedorService

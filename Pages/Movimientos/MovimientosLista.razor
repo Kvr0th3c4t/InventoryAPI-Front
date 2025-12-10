@@ -1,5 +1,5 @@
 ﻿@page "/movimientos-lista"
-
+@attribute [AuthorizeAttribute]
 @inject IMovimientoService MovimientoService
 @inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager

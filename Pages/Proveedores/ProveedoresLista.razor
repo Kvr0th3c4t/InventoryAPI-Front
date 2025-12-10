@@ -1,5 +1,5 @@
 ﻿@page "/proveedores-lista"
-
+@attribute [AuthorizeAttribute]
 @inject IProveedorService ProveedorService
 @inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager

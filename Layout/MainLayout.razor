@@ -48,6 +48,14 @@
                 <MudNavLink Href="/movimientos-crear" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">
                     Añadir movimiento</MudNavLink>
             </MudNavGroup>
+            <AuthorizeView>
+                <Authorized>
+                    <MudDivider Class="my-2" />
+                    <MudNavLink Href="/logout" Icon="@Icons.Material.Filled.Logout">
+                        Cerrar Sesión
+                    </MudNavLink>
+                </Authorized>
+            </AuthorizeView>
         </MudNavMenu>
     </MudDrawer>
 

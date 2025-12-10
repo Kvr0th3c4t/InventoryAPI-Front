@@ -1,5 +1,5 @@
 @page "/categorias-editar/{Id:int}"
-
+@attribute [AuthorizeAttribute]
 @inject ICategoriaService CategoriaService
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
