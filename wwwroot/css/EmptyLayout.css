@@ -13,7 +13,6 @@
      background-repeat: no-repeat;
  }
 
- /* Overlay con tu gradiente */
  .login-container::before {
      content: "";
      position: absolute;
