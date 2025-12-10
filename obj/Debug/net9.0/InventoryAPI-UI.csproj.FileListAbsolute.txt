@@ -854,7 +854,6 @@ C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net
 C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\0wz98yz2xy-f96y5mhlyw.gz
 C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\j8bmfkt3yt-syw801cg08.gz
 C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\qb8pqbaii7-5jyn8tmhqv.gz
-C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\p1ix585vic-orjfzb5ucx.gz
 C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\8px7xxyd8o-bqjiyaj88i.gz
 C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\lziptylc88-c2jlpeoesf.gz
 C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\vhv54u9hxt-erw9l3u2r3.gz
@@ -1131,10 +1130,12 @@ C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\bin\Debug\net
 C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\bin\Debug\net9.0\Microsoft.AspNetCore.Components.Authorization.dll
 C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\webcil\Microsoft.AspNetCore.Components.Authorization.wasm
 C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\5dol5x24o4-5ja82b9mxc.gz
-C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\bin\Debug\net9.0\wwwroot\_framework\InventoryAPI-UI.skg21p7bz9.wasm
-C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\bin\Debug\net9.0\wwwroot\_framework\InventoryAPI-UI.ayi1ruw3rr.pdb
-C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\bin\Debug\net9.0\wwwroot\_framework\InventoryAPI-UI.skg21p7bz9.wasm.gz
-C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\bin\Debug\net9.0\wwwroot\_framework\InventoryAPI-UI.ayi1ruw3rr.pdb.gz
-C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\29ww6hmcoj-skg21p7bz9.gz
-C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\42m9wjuyq1-ayi1ruw3rr.gz
-C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\ptuknc2mlm-7xyr8g793y.gz
+C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\bin\Debug\net9.0\wwwroot\_framework\InventoryAPI-UI.r8qwpbrhf1.wasm
+C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\bin\Debug\net9.0\wwwroot\_framework\InventoryAPI-UI.yl0m78ks99.pdb
+C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\bin\Debug\net9.0\wwwroot\_framework\InventoryAPI-UI.r8qwpbrhf1.wasm.gz
+C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\bin\Debug\net9.0\wwwroot\_framework\InventoryAPI-UI.yl0m78ks99.pdb.gz
+C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\p1ix585vic-4tzjbum2w2.gz
+C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\fxze1rq090-lwmhmx62hc.gz
+C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\29ww6hmcoj-r8qwpbrhf1.gz
+C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\42m9wjuyq1-yl0m78ks99.gz
+C:\Users\Adria\OneDrive\Escritorio\InventoryAPI-UI\InventoryAPI-UI\obj\Debug\net9.0\compressed\ptuknc2mlm-4iazo2gd4b.gz
