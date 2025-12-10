@@ -22,7 +22,7 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-var baseURl = builder.Configuration["BaseAPI"] ?? "http://localhost:5142/";
+var baseURl = builder.Configuration["BaseAPI"] ?? "https://inventoryapi.adriancc.com/";
 
 builder.Services.AddBlazoredSessionStorage();
 
