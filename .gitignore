@@ -1,0 +1,7 @@
+# Production secrets  
+wwwroot/appsettings.Production.json
+
+# Build
+bin/
+obj/
+publish/
