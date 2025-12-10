@@ -38,7 +38,7 @@ Sistema de gestión de inventario profesional desarrollado con **Blazor WebAssem
 ![Formulario creacion](./screenshots/creacion.png)
 
 ##Vista detalle de productos
-![Vista detalle](./screenshots/dedtalle.png)
+![Vista detalle](./screenshots/detalle.png)
 
 ## 🚀 Demo en Vivo
 
