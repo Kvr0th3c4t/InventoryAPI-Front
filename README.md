@@ -1,4 +1,4 @@
-# 🎨 Inventory API - Sistema de gestión de inventarios versión WEB - Frontend
+# Inventory API - Sistema de gestión de inventarios versión WEB - Frontend
 
 ![Badge de Estado](https://img.shields.io/badge/Estado-Producción-green)
 ![Badge de Versión](https://img.shields.io/badge/Versión-v1.0-blue)
@@ -13,31 +13,40 @@ Sistema de gestión de inventario profesional desarrollado con **Blazor WebAssem
 ---
 ## 📸 Capturas de pantalla
 
-##Login
+## Login
+
 ![Login](./screenshots/login.png)
 
-##Página principal
+## Página principal
+
 ![Home](./screenshots/home.png)
 
-##Listado con filtros y paginación
+## Listado con filtros y paginación
+
 ![Filtros](./screenshots/listaFiltros.png)
 
-##Kpi's de entiad
+## Kpi's de entiad
+
 ![KPIS](./screenshots/kpis.png)
 
-##Gráficas de entidad
+## Gráficas de entidad
+
 ![Graficas](./screenshots/graficas.png)
 
-##Tops de entidad
+## Tops de entidad
+
 ![Tops](./screenshots/tops.png)
 
-##Formularios de edición
+## Formularios de edición
+
 ![Formulario edicion](./screenshots/edicion.png)
 
-##Formularios de creación
+## Formularios de creación
+
 ![Formulario creacion](./screenshots/creacion.png)
 
-##Vista detalle de productos
+## Vista detalle de productos
+
 ![Vista detalle](./screenshots/detalle.png)
 
 ## 🚀 Demo en Vivo
